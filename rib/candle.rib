@@ -1,0 +1,108 @@
+
+Display "candle.tiff" "file" "rgb"
+#Format 1080 720 1.0
+
+Hider "raytrace" "int incremental" [1]
+Integrator "PxrPathTracer" "integrator"
+
+Projection "perspective" "fov" [30]
+
+Translate 0 0 5
+
+WorldBegin
+
+    #Domelight
+    AttributeBegin
+        Rotate -90 1 0 0 
+        Light "PxrDomeLight" "hdriLight" "float exposure" [0] "string lightColorMap" ["../EnvMap.tx"]
+    AttributeEnd
+    
+    AttributeBegin
+        #translate whole candle
+        #Rotate 90 0 1 0
+        #Rotate -45 0 0 1
+
+        
+        AttributeBegin
+            #shader candle
+            Pattern "waxSurface" "waxSurfaceOSL" "color Cin" [0 1 0]
+            Bxdf "PxrDisney" "waxShader" "reference color baseColor" ["waxSurfaceOSL:Cout"]
+
+            #displacement candle
+            Attribute "displacementbound" "sphere" [0.2] "coordinatesystem" ["object"]
+            Pattern "waxDisplacement" "waxDisplacementOSL"
+            Displace "PxrDisplace" "waxDisp"
+                "float dispAmount" [ 0.05 ]
+                "reference float dispScalar" [ "waxDisplacementOSL:resultF" ]
+
+            #big arch
+            TransformBegin
+                TransformBegin  
+                    Torus 0.4 0.25 0 360 180
+                TransformEnd
+                TransformBegin
+                    Rotate 90 1 0 0
+                    Translate 0.4 0 0
+                    Cylinder  0.25 0 1 360
+                TransformEnd
+                TransformBegin
+                    Rotate 90 1 0 0
+                    Translate -0.4 0 0
+                    Cylinder  0.25 0 1 360
+                TransformEnd
+            TransformEnd
+
+
+            #small arch
+            TransformBegin
+                
+                TransformBegin  
+                    Translate 0 -0.2 0
+                    Rotate 90 0 1 0
+                    Torus 0.25 0.21 0 360 180
+                TransformEnd
+                TransformBegin
+                    Rotate 90 1 0 0
+                    Translate 0 0.25 0.2
+                    Cylinder  0.21 0 0.8 360
+                TransformEnd
+                TransformBegin
+                    Rotate 90 1 0 0
+                    Translate 0 -0.25 0.2
+                    Cylinder  0.21 0 0.8 360
+                TransformEnd
+            TransformEnd
+        AttributeEnd
+
+        AttributeBegin
+
+        #shader wick
+        Pattern "wickSurface" "wickSurfaceOSL" "color Cin" [0 0 ]
+        Bxdf "PxrDisney" "waxShader" "reference color baseColor" ["wickSurfaceOSL:Cout"]
+        
+        #displacement wick
+        Attribute "displacementbound" "sphere" [0.1] "coordinatesystem" ["shader"]
+        Pattern "wickDisplacement" "wickDisplacementOSL"
+        Displace "PxrDisplace" "wickDisp"
+            "float dispAmount" [ 2 ]
+            "reference float dispScalar" [ "wickDisplacementOSL:resultF" ]
+
+            TransformBegin
+                Rotate 90 1 0 0
+                Translate 0 0 -1.3
+                Cylinder  0.01 0.4 1 360
+            TransformEnd
+        AttributeEnd
+
+
+
+    AttributeEnd
+
+
+#fbm good for dirt
+#turbulence for marble, organic, 
+# perlin range -1 to 1 -> uperlin(unsigned) range from 0 1 )
+
+WorldEnd
+
+
