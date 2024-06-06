@@ -2,10 +2,73 @@ OpenShadingLanguage 1.00
 # Compiled by oslc 1.11.0@OPROJECT_VERSION_RELEASE_TYPE@
 # options: 
 shader waxSurface
-param	color	Cin	0 0 0		%read{0,0} %write{2147483647,-1}
-oparam	color	Cout	0 0 0		%read{2147483647,-1} %write{0,0}
+oparam	color	Cout	0 0 0		%read{17,17} %write{13,17}
+oparam	float	specular	0		%read{2147483647,-1} %write{19,19}
+oparam	float	roughness	0		%read{2147483647,-1} %write{2147483647,-1}
+global	point	P	%read{0,9} %write{2147483647,-1}
+local	float	ramp	%read{15,15} %write{6,6}
+local	float	dirtBig	%read{12,18} %write{8,8}
+local	float	dirtSmall	%read{12,17} %write{10,12}
+local	color	Cin	%read{13,16} %write{11,11}
+temp	float	$tmp1	%read{6,6} %write{2,2}
+const	float	$const1	0.200000003		%read{2,19} %write{2147483647,-1}
+const	float	$const2	0.5		%read{1,5} %write{2147483647,-1}
+const	int	$const3	1		%read{0,3} %write{2147483647,-1}
+temp	float	$tmp2	%read{1,1} %write{0,0}
+temp	float	$tmp3	%read{2,2} %write{1,1}
+temp	float	$tmp4	%read{6,6} %write{5,5}
+temp	float	$tmp5	%read{4,4} %write{3,3}
+const	float	$const4	0.0500000007		%read{4,4} %write{2147483647,-1}
+temp	float	$tmp6	%read{5,5} %write{4,4}
+const	string	$const5	"perlin"		%read{8,10} %write{2147483647,-1}
+temp	point	$tmp7	%read{8,8} %write{7,7}
+const	float	$const7	20		%read{7,7} %write{2147483647,-1}
+temp	point	$tmp8	%read{10,10} %write{9,9}
+const	float	$const9	50		%read{9,9} %write{2147483647,-1}
+const	color	$const10	1 0.699999988 0		%read{11,11} %write{2147483647,-1}
+const	float	$const11	0.600000024		%read{14,16} %write{2147483647,-1}
+temp	color	$tmp9	%read{15,15} %write{14,14}
+temp	color	$tmp10	%read{17,17} %write{16,16}
+const	float	$const12	1		%read{19,19} %write{2147483647,-1}
+const	float	$const13	0.150000006		%read{18,18} %write{2147483647,-1}
+temp	float	$tmp11	%read{19,19} %write{18,18}
 code ___main___
-# waxSurface.osl:6
-#     Cout=Cin;
-	assign		Cout Cin 	%filename{"waxSurface.osl"} %line{6} %argrw{"wr"}
+# waxSurface.osl:7
+#     float ramp = smoothstep(0.2,0.5, P[1]+0.5) - smoothstep(0.2,0.5,P[1]+0.05);
+	compref		$tmp2 P $const3 	%filename{"waxSurface.osl"} %line{7} %argrw{"wrr"}
+	add		$tmp3 $tmp2 $const2 	%argrw{"wrr"}
+	smoothstep	$tmp1 $const1 $const2 $tmp3 	%argrw{"wrrr"}
+	compref		$tmp5 P $const3 	%argrw{"wrr"}
+	add		$tmp6 $tmp5 $const4 	%argrw{"wrr"}
+	smoothstep	$tmp4 $const1 $const2 $tmp6 	%argrw{"wrrr"}
+	sub		ramp $tmp1 $tmp4 	%argrw{"wrr"}
+# waxSurface.osl:8
+#     float dirtBig = noise("perlin", P*20);
+	mul		$tmp7 P $const7 	%line{8} %argrw{"wrr"}
+	noise		dirtBig $const5 $tmp7 	%argrw{"wrr"}
+# waxSurface.osl:9
+#     float dirtSmall = noise("perlin", P*50);
+	mul		$tmp8 P $const9 	%line{9} %argrw{"wrr"}
+	noise		dirtSmall $const5 $tmp8 	%argrw{"wrr"}
+# waxSurface.osl:10
+#     color Cin = color(1, 0.7, 0); 
+	assign		Cin $const10 	%line{10} %argrw{"wr"}
+# waxSurface.osl:11
+#     dirtSmall *= dirtBig;
+	mul		dirtSmall dirtSmall dirtBig 	%line{11} %argrw{"wrr"}
+# waxSurface.osl:12
+#     Cout = Cin;
+	assign		Cout Cin 	%line{12} %argrw{"wr"}
+# waxSurface.osl:13
+#     Cout = mix(Cin, Cin*0.6, ramp);
+	mul		$tmp9 Cin $const11 	%line{13} %argrw{"wrr"}
+	mix		Cout Cin $tmp9 ramp 	%argrw{"wrrr"}
+# waxSurface.osl:14
+#     Cout = mix(Cout, Cin*0.6, dirtSmall);
+	mul		$tmp10 Cin $const11 	%line{14} %argrw{"wrr"}
+	mix		Cout Cout $tmp10 dirtSmall 	%argrw{"wrrr"}
+# waxSurface.osl:15
+#     specular = mix(0.2,1,dirtBig*0.15);
+	mul		$tmp11 dirtBig $const13 	%line{15} %argrw{"wrr"}
+	mix		specular $const1 $const12 $tmp11 	%argrw{"wrrr"}
 	end

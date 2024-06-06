@@ -1,7 +1,19 @@
 shader wickSurface(
-    color Cin = 0,
-output color Cout = 0
+output color Cout = 0, 
+output float specular = 0,
+output float roughness = 0
 )
 {
-    Cout=Cin;
+    color Cin = color(0.76,0.69,0.53)*0.9;
+    float noiseEdge = noise("uperlin", P * 20);
+    float whichStripe= 1 - smoothstep(0.12,0.14, (v/2)+0.01);
+
+    float noiseDots = noise("perlin", P * 90);
+
+    Cout=mix(Cin, Cin*0.6, whichStripe);
+    Cout = mix(Cout,color(0.4,0.31,0.2), noiseDots);
+
+    specular = mix(0,1, whichStripe);
+    //specular = clamp(specular, 0, 1);
+    roughness = mix(0, 0.6, whichStripe);
 }

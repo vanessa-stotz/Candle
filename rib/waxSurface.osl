@@ -1,7 +1,18 @@
 shader waxSurface(
-    color Cin = 0,
-output color Cout = 0
+output color Cout = 0,
+output float specular = 0,
+output float roughness = 0
 )
 {
-    Cout=Cin;
+    float ramp = smoothstep(0.2,0.5, P[1]+0.5) - smoothstep(0.2,0.5,P[1]+0.05);
+    float dirtBig = noise("perlin", P*20);
+    float dirtSmall = noise("perlin", P*50);
+    color Cin = color(1, 0.7, 0); 
+    dirtSmall *= dirtBig;
+    Cout = Cin;
+    Cout = mix(Cin, Cin*0.6, ramp);
+    Cout = mix(Cout, Cin*0.6, dirtSmall);
+    specular = mix(0.2,1,dirtBig*0.15);
+
+    
 }

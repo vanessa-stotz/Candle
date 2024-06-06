@@ -2,136 +2,1418 @@ OpenShadingLanguage 1.00
 # Compiled by oslc 1.11.0@OPROJECT_VERSION_RELEASE_TYPE@
 # options: 
 shader waxDisplacement
-oparam	float	resultF	0		%read{35,40} %write{27,40}
+oparam	float	resultF	0		%read{13,545} %write{13,545}
 global	point	P	%read{1,1} %write{2147483647,-1}
-global	float	u	%read{4,19} %write{2147483647,-1}
-global	float	v	%read{10,20} %write{2147483647,-1}
-local	point	worldPoint	%read{28,36} %write{1,1}
-local	float	fuzz	%read{23,24} %write{2,2}
-local	float	repeatCount	%read{4,20} %write{3,3}
-local	float	s	%read{17,17} %write{9,9}
-local	float	t	%read{17,17} %write{15,15}
-local	point	centre	%read{18,18} %write{16,16}
-local	point	here	%read{18,18} %write{17,17}
-local	float	dist	%read{25,25} %write{18,18}
-local	float	radius	%read{23,24} %write{22,22}
-local	float	inDisk	%read{27,27} %write{26,26}
+local	vector	___252_axis	%read{99,487} %write{96,482}
+local	float	___252_cosang	%read{98,525} %write{97,483}
+local	float	___252_sinang	%read{109,520} %write{97,483}
+local	float	___252_cosang1	%read{108,519} %write{98,484}
+local	float	___252_x	%read{102,520} %write{99,485}
+local	float	___252_y	%read{107,518} %write{100,486}
+local	float	___252_z	%read{109,523} %write{101,487}
+local	matrix	___252_M	%read{143,529} %write{141,527}
+local	float	___325_inLineX	%read{43,360} %write{36,353}
+local	float	___325_inLineY	%read{43,360} %write{39,356}
+local	float	___325_inLineZ	%read{44,361} %write{42,359}
+local	point	worldPoint	%read{2,476} %write{1,412}
+local	float	dist	%read{10,413} %write{9,411}
+local	float	inDisk	%read{12,435} %write{11,415}
+local	float	dispHoleTop	%read{13,13} %write{12,12}
+local	float	noiseLine	%read{16,282} %write{15,278}
+local	float	smoothStart	%read{34,367} %write{18,281}
+local	float	smoothEnd	%read{34,367} %write{21,284}
+local	float	inLine	%read{48,400} %write{44,369}
+local	float	noiseDispAmount	%read{48,400} %write{47,399}
+local	float	dispLine	%read{49,401} %write{48,400}
+local	point	pointLineTop	%read{85,167} %write{84,84}
+local	point	rotXP	%read{145,147} %write{144,227}
+local	point	rotYP	%read{339,341} %write{338,338}
+local	float	lineX	%read{369,369} %write{368,368}
+local	float	noiseCircle	%read{391,392} %write{376,376}
+local	float	noiseTop	%read{395,396} %write{390,396}
+local	point	fingerprintPoint	%read{420,424} %write{419,419}
+local	float	l	%read{428,434} %write{427,434}
+local	float	dispFinger	%read{436,436} %write{435,435}
+local	float	mag	%read{443,544} %write{437,543}
+local	float	freq	%read{443,541} %write{438,541}
+local	point	scratchesPoint	%read{440,541} %write{439,530}
+local	int	___326_i	%read{443,451} %write{442,451}
+local	int	___328_i	%read{461,469} %write{460,469}
+local	int	___330_i	%read{533,541} %write{532,541}
 const	string	$const1	"world"		%read{1,1} %write{2147483647,-1}
 const	string	$const2	"transform"		%read{0,0} %write{2147483647,-1}
 const	string	$const3	"common"		%read{1,1} %write{2147483647,-1}
-const	float	$const4	0.100000001		%read{2,38} %write{2147483647,-1}
-const	int	$const5	5		%read{3,3} %write{2147483647,-1}
-temp	float	$tmp1	%read{6,9} %write{4,4}
-const	float	$const7	1		%read{6,26} %write{2147483647,-1}
-const	string	$const8	"mod"		%read{5,11} %write{2147483647,-1}
-temp	float	$tmp2	%read{8,8} %write{7,7}
-temp	float	$tmp3	%read{7,7} %write{6,6}
-temp	float	$tmp4	%read{9,9} %write{8,8}
-temp	float	$tmp5	%read{12,15} %write{10,10}
-temp	float	$tmp6	%read{14,14} %write{13,13}
-temp	float	$tmp7	%read{13,13} %write{12,12}
-temp	float	$tmp8	%read{15,15} %write{14,14}
-const	point	$const9	0.5 0.5 0		%read{16,16} %write{2147483647,-1}
-const	float	$const11	0		%read{17,17} %write{2147483647,-1}
-temp	float	$tmp9	%read{22,22} %write{21,21}
-const	string	$const12	"cell"		%read{21,21} %write{2147483647,-1}
-temp	float	$tmp10	%read{21,21} %write{19,19}
-temp	float	$tmp11	%read{21,21} %write{20,20}
-const	float	$const13	0.400000006		%read{22,22} %write{2147483647,-1}
-temp	float	$tmp12	%read{26,26} %write{25,25}
-temp	float	$tmp13	%read{25,25} %write{23,23}
-temp	float	$tmp14	%read{25,25} %write{24,24}
-const	float	$const14	0.00999999978		%read{27,27} %write{2147483647,-1}
-temp	float	$tmp15	%read{30,30} %write{29,29}
-const	string	$const15	"perlin"		%read{29,37} %write{2147483647,-1}
-temp	point	$tmp16	%read{29,29} %write{28,28}
-const	float	$const16	5		%read{28,28} %write{2147483647,-1}
-temp	float	$tmp17	%read{33,33} %write{32,32}
-temp	point	$tmp18	%read{32,32} %write{31,31}
-const	float	$const18	10		%read{31,31} %write{2147483647,-1}
-temp	float	$tmp19	%read{34,34} %write{33,33}
-temp	float	$tmp20	%read{35,35} %write{34,34}
-const	float	$const20	2		%read{34,34} %write{2147483647,-1}
-temp	float	$tmp21	%read{38,38} %write{37,37}
-temp	point	$tmp22	%read{37,37} %write{36,36}
-const	float	$const22	21		%read{36,36} %write{2147483647,-1}
-temp	float	$tmp23	%read{39,39} %write{38,38}
-temp	float	$tmp24	%read{40,40} %write{39,39}
-const	float	$const24	4		%read{39,39} %write{2147483647,-1}
+const	int	$const4	0		%read{2,534} %write{2147483647,-1}
+temp	float	$tmp1	%read{4,4} %write{2,2}
+temp	float	$tmp2	%read{4,4} %write{3,3}
+temp	float	$tmp3	%read{8,8} %write{4,4}
+const	int	$const5	2		%read{5,487} %write{2147483647,-1}
+temp	float	$tmp4	%read{7,7} %write{5,5}
+temp	float	$tmp5	%read{7,7} %write{6,6}
+temp	float	$tmp6	%read{8,8} %write{7,7}
+temp	float	$tmp7	%read{9,9} %write{8,8}
+const	int	$const6	1		%read{25,541} %write{2147483647,-1}
+temp	float	$tmp8	%read{11,11} %write{10,10}
+const	float	$const7	0.0199999996		%read{10,269} %write{2147483647,-1}
+const	float	$const8	1		%read{11,543} %write{2147483647,-1}
+const	float	$const9	0		%read{12,527} %write{2147483647,-1}
+const	float	$const11	-1		%read{12,12} %write{2147483647,-1}
+const	string	$const12	"uperlin"		%read{15,398} %write{2147483647,-1}
+temp	point	$tmp9	%read{15,15} %write{14,14}
+const	float	$const14	9		%read{14,277} %write{2147483647,-1}
+const	float	$const15	0.0500000007		%read{16,414} %write{2147483647,-1}
+temp	float	$tmp10	%read{17,17} %write{16,16}
+temp	float	$tmp11	%read{18,18} %write{17,17}
+const	float	$const16	2		%read{17,283} %write{2147483647,-1}
+const	float	$const17	1.20000005		%read{18,284} %write{2147483647,-1}
+const	float	$const18	0.100000001		%read{19,542} %write{2147483647,-1}
+temp	float	$tmp12	%read{20,20} %write{19,19}
+temp	float	$tmp13	%read{21,21} %write{20,20}
+temp	float	$tmp14	%read{34,34} %write{22,22}
+temp	float	$tmp15	%read{24,24} %write{23,23}
+const	float	$const19	0.200000003		%read{24,392} %write{2147483647,-1}
+temp	float	$tmp16	%read{35,35} %write{24,24}
+temp	float	$tmp17	%read{26,26} %write{25,25}
+temp	float	$tmp18	%read{37,37} %write{26,26}
+temp	float	$tmp19	%read{28,28} %write{27,27}
+const	float	$const20	1.10000002		%read{28,28} %write{2147483647,-1}
+temp	float	$tmp20	%read{38,38} %write{28,28}
+temp	float	$tmp21	%read{30,30} %write{29,29}
+const	float	$const21	0.300000012		%read{30,542} %write{2147483647,-1}
+temp	float	$tmp22	%read{40,40} %write{30,30}
+temp	float	$tmp23	%read{32,32} %write{31,31}
+const	float	$const22	0.270000011		%read{32,366} %write{2147483647,-1}
+temp	float	$tmp24	%read{41,41} %write{32,32}
+const	string	$const23	"lines"		%read{33,350} %write{2147483647,-1}
+temp	float	$tmp25	%read{36,36} %write{34,34}
+temp	float	$tmp26	%read{36,36} %write{35,35}
+temp	float	$tmp27	%read{39,39} %write{37,37}
+temp	float	$tmp28	%read{39,39} %write{38,38}
+temp	float	$tmp29	%read{42,42} %write{40,40}
+temp	float	$tmp30	%read{42,42} %write{41,41}
+temp	float	$tmp31	%read{44,44} %write{43,43}
+const	float	$const24	0.00999999978		%read{47,385} %write{2147483647,-1}
+temp	float	$tmp32	%read{47,47} %write{46,46}
+const	int	$const25	10		%read{461,461} %write{2147483647,-1}
+temp	point	$tmp33	%read{46,46} %write{45,45}
+const	float	$const26	10		%read{45,476} %write{2147483647,-1}
+temp	point	$tmp34	%read{51,51} %write{50,50}
+const	float	$const28	20		%read{50,50} %write{2147483647,-1}
+temp	float	$tmp35	%read{53,53} %write{52,52}
+temp	float	$tmp36	%read{64,64} %write{53,53}
+temp	float	$tmp37	%read{55,55} %write{54,54}
+temp	float	$tmp38	%read{65,65} %write{55,55}
+temp	float	$tmp39	%read{57,57} %write{56,56}
+const	float	$const29	0.949999988		%read{57,57} %write{2147483647,-1}
+temp	float	$tmp40	%read{67,67} %write{57,57}
+temp	float	$tmp41	%read{59,59} %write{58,58}
+temp	float	$tmp42	%read{68,68} %write{59,59}
+temp	float	$tmp43	%read{61,61} %write{60,60}
+temp	float	$tmp44	%read{70,70} %write{61,61}
+temp	float	$tmp45	%read{71,71} %write{62,62}
+temp	float	$tmp46	%read{66,66} %write{64,64}
+temp	float	$tmp47	%read{66,66} %write{65,65}
+temp	float	$tmp48	%read{69,69} %write{67,67}
+temp	float	$tmp49	%read{69,69} %write{68,68}
+temp	float	$tmp50	%read{72,72} %write{70,70}
+temp	float	$tmp51	%read{72,72} %write{71,71}
+temp	float	$tmp52	%read{74,74} %write{73,73}
+temp	float	$tmp53	%read{77,77} %write{76,76}
+temp	point	$tmp54	%read{76,76} %write{75,75}
+temp	point	$tmp55	%read{84,84} %write{83,83}
+temp	float	$tmp56	%read{83,83} %write{80,80}
+temp	float	$tmp57	%read{83,83} %write{81,81}
+temp	float	$tmp58	%read{83,83} %write{82,82}
+const	point	$const30	-0.0900000036 0 0		%read{84,84} %write{2147483647,-1}
+const	string	$const31	"perlin"		%read{86,536} %write{2147483647,-1}
+temp	point	$tmp60	%read{86,86} %write{85,85}
+temp	float	$tmp61	%read{88,88} %write{87,87}
+temp	float	$tmp62	%read{89,89} %write{88,88}
+const	float	$const33	3		%read{88,88} %write{2147483647,-1}
+temp	float	$tmp63	%read{97,97} %write{93,93}
+const	float	$const35	45		%read{93,93} %write{2147483647,-1}
+const	string	$const36	"radians"		%read{91,477} %write{2147483647,-1}
+const	float	$const37	3.14159274		%read{92,478} %write{2147483647,-1}
+const	float	$const38	180		%read{92,478} %write{2147483647,-1}
+temp	float	$tmp64	%read{93,93} %write{92,92}
+const	point	$const39	0 0 0		%read{95,530} %write{2147483647,-1}
+const	point	$const40	0 1 0		%read{95,481} %write{2147483647,-1}
+const	string	$const41	"rotate"		%read{94,480} %write{2147483647,-1}
+temp	vector	$tmp67	%read{96,96} %write{95,95}
+temp	float	$tmp68	%read{106,106} %write{102,102}
+temp	float	$tmp69	%read{104,104} %write{103,103}
+temp	float	$tmp70	%read{105,105} %write{104,104}
+temp	float	$tmp71	%read{106,106} %write{105,105}
+temp	float	$tmp72	%read{141,141} %write{106,106}
+temp	float	$tmp73	%read{108,108} %write{107,107}
+temp	float	$tmp74	%read{110,110} %write{108,108}
+temp	float	$tmp75	%read{110,110} %write{109,109}
+temp	float	$tmp76	%read{141,141} %write{110,110}
+temp	float	$tmp77	%read{112,112} %write{111,111}
+temp	float	$tmp78	%read{114,114} %write{112,112}
+temp	float	$tmp79	%read{114,114} %write{113,113}
+temp	float	$tmp80	%read{141,141} %write{114,114}
+temp	float	$tmp81	%read{116,116} %write{115,115}
+temp	float	$tmp82	%read{118,118} %write{116,116}
+temp	float	$tmp83	%read{118,118} %write{117,117}
+temp	float	$tmp84	%read{141,141} %write{118,118}
+temp	float	$tmp85	%read{123,123} %write{119,119}
+temp	float	$tmp86	%read{121,121} %write{120,120}
+temp	float	$tmp87	%read{122,122} %write{121,121}
+temp	float	$tmp88	%read{123,123} %write{122,122}
+temp	float	$tmp89	%read{141,141} %write{123,123}
+temp	float	$tmp90	%read{125,125} %write{124,124}
+temp	float	$tmp91	%read{127,127} %write{125,125}
+temp	float	$tmp92	%read{127,127} %write{126,126}
+temp	float	$tmp93	%read{141,141} %write{127,127}
+temp	float	$tmp94	%read{129,129} %write{128,128}
+temp	float	$tmp95	%read{131,131} %write{129,129}
+temp	float	$tmp96	%read{131,131} %write{130,130}
+temp	float	$tmp97	%read{141,141} %write{131,131}
+temp	float	$tmp98	%read{133,133} %write{132,132}
+temp	float	$tmp99	%read{135,135} %write{133,133}
+temp	float	$tmp100	%read{135,135} %write{134,134}
+temp	float	$tmp101	%read{141,141} %write{135,135}
+temp	float	$tmp102	%read{140,140} %write{136,136}
+temp	float	$tmp103	%read{138,138} %write{137,137}
+temp	float	$tmp104	%read{139,139} %write{138,138}
+temp	float	$tmp105	%read{140,140} %write{139,139}
+temp	float	$tmp106	%read{141,141} %write{140,140}
+temp	vector	$tmp107	%read{144,144} %write{143,143}
+temp	vector	$tmp108	%read{143,143} %write{142,142}
+temp	float	$tmp109	%read{146,146} %write{145,145}
+const	float	$const42	0.0799999982		%read{146,146} %write{2147483647,-1}
+temp	float	$tmp110	%read{156,156} %write{146,146}
+temp	float	$tmp111	%read{157,157} %write{147,147}
+temp	float	$tmp112	%read{149,149} %write{148,148}
+const	float	$const43	1.25		%read{149,149} %write{2147483647,-1}
+temp	float	$tmp113	%read{159,159} %write{149,149}
+temp	float	$tmp114	%read{151,151} %write{150,150}
+const	float	$const44	1.70000005		%read{151,235} %write{2147483647,-1}
+temp	float	$tmp115	%read{160,160} %write{151,151}
+temp	float	$tmp116	%read{153,153} %write{152,152}
+temp	float	$tmp117	%read{162,162} %write{153,153}
+temp	float	$tmp118	%read{163,163} %write{154,154}
+temp	float	$tmp119	%read{158,158} %write{156,156}
+temp	float	$tmp120	%read{158,158} %write{157,157}
+temp	float	$tmp121	%read{161,161} %write{159,159}
+temp	float	$tmp122	%read{161,161} %write{160,160}
+temp	float	$tmp123	%read{164,164} %write{162,162}
+temp	float	$tmp124	%read{164,164} %write{163,163}
+temp	float	$tmp125	%read{166,166} %write{165,165}
+const	float	$const45	0.00899999961		%read{169,169} %write{2147483647,-1}
+temp	float	$tmp126	%read{169,169} %write{168,168}
+temp	point	$tmp127	%read{168,168} %write{167,167}
+temp	point	$tmp128	%read{173,173} %write{172,172}
+const	float	$const47	15		%read{172,172} %write{2147483647,-1}
+temp	float	$tmp129	%read{180,180} %write{176,176}
+temp	float	$tmp130	%read{176,176} %write{175,175}
+temp	vector	$tmp133	%read{179,179} %write{178,178}
+temp	float	$tmp134	%read{189,189} %write{185,185}
+temp	float	$tmp135	%read{187,187} %write{186,186}
+temp	float	$tmp136	%read{188,188} %write{187,187}
+temp	float	$tmp137	%read{189,189} %write{188,188}
+temp	float	$tmp138	%read{224,224} %write{189,189}
+temp	float	$tmp139	%read{191,191} %write{190,190}
+temp	float	$tmp140	%read{193,193} %write{191,191}
+temp	float	$tmp141	%read{193,193} %write{192,192}
+temp	float	$tmp142	%read{224,224} %write{193,193}
+temp	float	$tmp143	%read{195,195} %write{194,194}
+temp	float	$tmp144	%read{197,197} %write{195,195}
+temp	float	$tmp145	%read{197,197} %write{196,196}
+temp	float	$tmp146	%read{224,224} %write{197,197}
+temp	float	$tmp147	%read{199,199} %write{198,198}
+temp	float	$tmp148	%read{201,201} %write{199,199}
+temp	float	$tmp149	%read{201,201} %write{200,200}
+temp	float	$tmp150	%read{224,224} %write{201,201}
+temp	float	$tmp151	%read{206,206} %write{202,202}
+temp	float	$tmp152	%read{204,204} %write{203,203}
+temp	float	$tmp153	%read{205,205} %write{204,204}
+temp	float	$tmp154	%read{206,206} %write{205,205}
+temp	float	$tmp155	%read{224,224} %write{206,206}
+temp	float	$tmp156	%read{208,208} %write{207,207}
+temp	float	$tmp157	%read{210,210} %write{208,208}
+temp	float	$tmp158	%read{210,210} %write{209,209}
+temp	float	$tmp159	%read{224,224} %write{210,210}
+temp	float	$tmp160	%read{212,212} %write{211,211}
+temp	float	$tmp161	%read{214,214} %write{212,212}
+temp	float	$tmp162	%read{214,214} %write{213,213}
+temp	float	$tmp163	%read{224,224} %write{214,214}
+temp	float	$tmp164	%read{216,216} %write{215,215}
+temp	float	$tmp165	%read{218,218} %write{216,216}
+temp	float	$tmp166	%read{218,218} %write{217,217}
+temp	float	$tmp167	%read{224,224} %write{218,218}
+temp	float	$tmp168	%read{223,223} %write{219,219}
+temp	float	$tmp169	%read{221,221} %write{220,220}
+temp	float	$tmp170	%read{222,222} %write{221,221}
+temp	float	$tmp171	%read{223,223} %write{222,222}
+temp	float	$tmp172	%read{224,224} %write{223,223}
+temp	vector	$tmp173	%read{227,227} %write{226,226}
+temp	vector	$tmp174	%read{226,226} %write{225,225}
+temp	float	$tmp175	%read{229,229} %write{228,228}
+const	float	$const48	0.400000006		%read{229,229} %write{2147483647,-1}
+temp	float	$tmp176	%read{240,240} %write{229,229}
+temp	float	$tmp177	%read{231,231} %write{230,230}
+const	float	$const49	0.419999987		%read{231,231} %write{2147483647,-1}
+temp	float	$tmp178	%read{241,241} %write{231,231}
+temp	float	$tmp179	%read{233,233} %write{232,232}
+const	float	$const50	1.5		%read{233,233} %write{2147483647,-1}
+temp	float	$tmp180	%read{243,243} %write{233,233}
+temp	float	$tmp181	%read{235,235} %write{234,234}
+temp	float	$tmp182	%read{244,244} %write{235,235}
+temp	float	$tmp183	%read{237,237} %write{236,236}
+const	float	$const51	0.0700000003		%read{237,237} %write{2147483647,-1}
+temp	float	$tmp184	%read{246,246} %write{237,237}
+temp	float	$tmp185	%read{247,247} %write{238,238}
+temp	float	$tmp186	%read{242,242} %write{240,240}
+temp	float	$tmp187	%read{242,242} %write{241,241}
+temp	float	$tmp188	%read{245,245} %write{243,243}
+temp	float	$tmp189	%read{245,245} %write{244,244}
+temp	float	$tmp190	%read{248,248} %write{246,246}
+temp	float	$tmp191	%read{248,248} %write{247,247}
+temp	float	$tmp192	%read{250,250} %write{249,249}
+temp	float	$tmp193	%read{253,253} %write{252,252}
+temp	point	$tmp194	%read{252,252} %write{251,251}
+temp	float	$tmp195	%read{257,257} %write{256,256}
+temp	float	$tmp196	%read{260,260} %write{257,257}
+temp	float	$tmp197	%read{259,259} %write{258,258}
+temp	float	$tmp198	%read{260,260} %write{259,259}
+temp	float	$tmp199	%read{266,266} %write{260,260}
+temp	float	$tmp200	%read{262,262} %write{261,261}
+const	float	$const52	0.239999995		%read{262,264} %write{2147483647,-1}
+temp	float	$tmp201	%read{265,265} %write{262,262}
+temp	float	$tmp202	%read{264,264} %write{263,263}
+temp	float	$tmp203	%read{265,265} %write{264,264}
+temp	float	$tmp204	%read{266,266} %write{265,265}
+temp	float	$tmp205	%read{267,267} %write{266,266}
+temp	float	$tmp206	%read{272,272} %write{271,271}
+temp	float	$tmp207	%read{271,271} %write{268,268}
+temp	float	$tmp208	%read{271,271} %write{269,269}
+const	float	$const53	0.600000024		%read{270,457} %write{2147483647,-1}
+temp	float	$tmp209	%read{271,271} %write{270,270}
+temp	float	$tmp210	%read{275,275} %write{274,274}
+temp	point	$tmp211	%read{274,274} %write{273,273}
+temp	point	$tmp212	%read{278,278} %write{277,277}
+temp	float	$tmp213	%read{280,280} %write{279,279}
+temp	float	$tmp214	%read{281,281} %write{280,280}
+temp	float	$tmp215	%read{283,283} %write{282,282}
+temp	float	$tmp216	%read{284,284} %write{283,283}
+temp	float	$tmp217	%read{291,291} %write{287,287}
+const	float	$const55	-45		%read{287,287} %write{2147483647,-1}
+temp	float	$tmp218	%read{287,287} %write{286,286}
+const	point	$const56	1 1 0		%read{289,289} %write{2147483647,-1}
+temp	vector	$tmp221	%read{290,290} %write{289,289}
+temp	float	$tmp222	%read{300,300} %write{296,296}
+temp	float	$tmp223	%read{298,298} %write{297,297}
+temp	float	$tmp224	%read{299,299} %write{298,298}
+temp	float	$tmp225	%read{300,300} %write{299,299}
+temp	float	$tmp226	%read{335,335} %write{300,300}
+temp	float	$tmp227	%read{302,302} %write{301,301}
+temp	float	$tmp228	%read{304,304} %write{302,302}
+temp	float	$tmp229	%read{304,304} %write{303,303}
+temp	float	$tmp230	%read{335,335} %write{304,304}
+temp	float	$tmp231	%read{306,306} %write{305,305}
+temp	float	$tmp232	%read{308,308} %write{306,306}
+temp	float	$tmp233	%read{308,308} %write{307,307}
+temp	float	$tmp234	%read{335,335} %write{308,308}
+temp	float	$tmp235	%read{310,310} %write{309,309}
+temp	float	$tmp236	%read{312,312} %write{310,310}
+temp	float	$tmp237	%read{312,312} %write{311,311}
+temp	float	$tmp238	%read{335,335} %write{312,312}
+temp	float	$tmp239	%read{317,317} %write{313,313}
+temp	float	$tmp240	%read{315,315} %write{314,314}
+temp	float	$tmp241	%read{316,316} %write{315,315}
+temp	float	$tmp242	%read{317,317} %write{316,316}
+temp	float	$tmp243	%read{335,335} %write{317,317}
+temp	float	$tmp244	%read{319,319} %write{318,318}
+temp	float	$tmp245	%read{321,321} %write{319,319}
+temp	float	$tmp246	%read{321,321} %write{320,320}
+temp	float	$tmp247	%read{335,335} %write{321,321}
+temp	float	$tmp248	%read{323,323} %write{322,322}
+temp	float	$tmp249	%read{325,325} %write{323,323}
+temp	float	$tmp250	%read{325,325} %write{324,324}
+temp	float	$tmp251	%read{335,335} %write{325,325}
+temp	float	$tmp252	%read{327,327} %write{326,326}
+temp	float	$tmp253	%read{329,329} %write{327,327}
+temp	float	$tmp254	%read{329,329} %write{328,328}
+temp	float	$tmp255	%read{335,335} %write{329,329}
+temp	float	$tmp256	%read{334,334} %write{330,330}
+temp	float	$tmp257	%read{332,332} %write{331,331}
+temp	float	$tmp258	%read{333,333} %write{332,332}
+temp	float	$tmp259	%read{334,334} %write{333,333}
+temp	float	$tmp260	%read{335,335} %write{334,334}
+temp	vector	$tmp261	%read{338,338} %write{337,337}
+temp	vector	$tmp262	%read{337,337} %write{336,336}
+temp	float	$tmp263	%read{340,340} %write{339,339}
+const	float	$const57	0.349999994		%read{340,340} %write{2147483647,-1}
+temp	float	$tmp264	%read{351,351} %write{340,340}
+temp	float	$tmp265	%read{342,342} %write{341,341}
+const	float	$const58	0.360000014		%read{342,403} %write{2147483647,-1}
+temp	float	$tmp266	%read{352,352} %write{342,342}
+temp	float	$tmp267	%read{344,344} %write{343,343}
+const	float	$const59	0.230000004		%read{344,344} %write{2147483647,-1}
+temp	float	$tmp268	%read{354,354} %write{344,344}
+temp	float	$tmp269	%read{346,346} %write{345,345}
+temp	float	$tmp270	%read{355,355} %write{346,346}
+temp	float	$tmp271	%read{348,348} %write{347,347}
+temp	float	$tmp272	%read{357,357} %write{348,348}
+temp	float	$tmp273	%read{358,358} %write{349,349}
+temp	float	$tmp274	%read{353,353} %write{351,351}
+temp	float	$tmp275	%read{353,353} %write{352,352}
+temp	float	$tmp276	%read{356,356} %write{354,354}
+temp	float	$tmp277	%read{356,356} %write{355,355}
+temp	float	$tmp278	%read{359,359} %write{357,357}
+temp	float	$tmp279	%read{359,359} %write{358,358}
+temp	float	$tmp280	%read{361,361} %write{360,360}
+temp	float	$tmp281	%read{368,368} %write{364,364}
+temp	float	$tmp282	%read{363,363} %write{362,362}
+const	float	$const60	0.197999999		%read{363,363} %write{2147483647,-1}
+temp	float	$tmp283	%read{364,364} %write{363,363}
+temp	float	$tmp284	%read{368,368} %write{367,367}
+temp	float	$tmp285	%read{366,366} %write{365,365}
+temp	float	$tmp286	%read{367,367} %write{366,366}
+temp	float	$tmp287	%read{372,372} %write{371,371}
+temp	point	$tmp288	%read{371,371} %write{370,370}
+temp	point	$tmp289	%read{376,376} %write{375,375}
+const	float	$const62	100		%read{375,375} %write{2147483647,-1}
+temp	float	$tmp290	%read{378,378} %write{377,377}
+temp	float	$tmp291	%read{381,381} %write{378,378}
+temp	float	$tmp292	%read{380,380} %write{379,379}
+temp	float	$tmp293	%read{381,381} %write{380,380}
+temp	float	$tmp294	%read{387,387} %write{381,381}
+temp	float	$tmp295	%read{383,383} %write{382,382}
+temp	float	$tmp296	%read{386,386} %write{383,383}
+temp	float	$tmp297	%read{385,385} %write{384,384}
+temp	float	$tmp298	%read{386,386} %write{385,385}
+temp	float	$tmp299	%read{387,387} %write{386,386}
+temp	float	$tmp300	%read{388,388} %write{387,387}
+temp	point	$tmp301	%read{390,390} %write{389,389}
+const	float	$const64	4		%read{389,389} %write{2147483647,-1}
+temp	float	$tmp302	%read{394,394} %write{393,393}
+temp	float	$tmp303	%read{393,393} %write{391,391}
+temp	float	$tmp304	%read{393,393} %write{392,392}
+const	float	$const65	0.5		%read{395,475} %write{2147483647,-1}
+const	float	$const66	0.540000021		%read{395,395} %write{2147483647,-1}
+temp	float	$tmp305	%read{399,399} %write{398,398}
+temp	point	$tmp306	%read{398,398} %write{397,397}
+temp	float	$tmp307	%read{403,403} %write{402,402}
+temp	float	$tmp308	%read{406,406} %write{403,403}
+temp	float	$tmp309	%read{405,405} %write{404,404}
+const	float	$const67	0.370000005		%read{405,405} %write{2147483647,-1}
+temp	float	$tmp310	%read{406,406} %write{405,405}
+temp	float	$tmp311	%read{410,410} %write{406,406}
+temp	float	$tmp312	%read{409,409} %write{407,407}
+temp	float	$tmp313	%read{409,409} %write{408,408}
+temp	float	$tmp314	%read{410,410} %write{409,409}
+temp	float	$tmp315	%read{411,411} %write{410,410}
+const	point	$const68	0.360000014 0.5 0		%read{412,412} %write{2147483647,-1}
+temp	float	$tmp317	%read{415,415} %write{414,414}
+temp	float	$tmp318	%read{414,414} %write{413,413}
+const	point	$const69	0.360000014 0 0		%read{416,416} %write{2147483647,-1}
+temp	point	$tmp320	%read{419,419} %write{416,416}
+temp	vector	$tmp321	%read{419,419} %write{418,418}
+temp	point	$tmp322	%read{418,418} %write{417,417}
+const	float	$const71	6		%read{417,417} %write{2147483647,-1}
+temp	float	$tmp323	%read{422,422} %write{420,420}
+temp	float	$tmp324	%read{422,422} %write{421,421}
+temp	float	$tmp325	%read{426,426} %write{422,422}
+temp	float	$tmp326	%read{425,425} %write{423,423}
+temp	float	$tmp327	%read{425,425} %write{424,424}
+temp	float	$tmp328	%read{426,426} %write{425,425}
+temp	float	$tmp329	%read{427,427} %write{426,426}
+const	int	$const72	8		%read{443,533} %write{2147483647,-1}
+temp	float	$tmp330	%read{430,433} %write{428,428}
+const	float	$const73	8		%read{428,428} %write{2147483647,-1}
+const	string	$const74	"mod"		%read{429,429} %write{2147483647,-1}
+temp	float	$tmp331	%read{432,432} %write{431,431}
+temp	float	$tmp332	%read{431,431} %write{430,430}
+temp	float	$tmp333	%read{433,433} %write{432,432}
+const	float	$const75	-0.0199999996		%read{435,435} %write{2147483647,-1}
+const	float	$const77	5		%read{439,439} %write{2147483647,-1}
+const	point	$const78	0 0 5		%read{440,440} %write{2147483647,-1}
+temp	int	$tmp335	%read{443,451} %write{443,451}
+temp	int	$tmp336	%read{441,451} %write{442,451}
+temp	float	$tmp337	%read{443,451} %write{443,451}
+temp	float	$tmp338	%read{443,451} %write{443,451}
+temp	point	$tmp339	%read{443,451} %write{443,451}
+temp	float	$tmp340	%read{443,451} %write{443,451}
+const	float	$const79	2.0999999		%read{450,540} %write{2147483647,-1}
+temp	float	$tmp341	%read{453,453} %write{452,452}
+temp	float	$tmp342	%read{455,455} %write{454,454}
+const	float	$const80	-0.00499999989		%read{454,472} %write{2147483647,-1}
+temp	int	$tmp343	%read{461,469} %write{461,469}
+temp	int	$tmp344	%read{459,469} %write{460,469}
+temp	float	$tmp345	%read{461,469} %write{461,469}
+temp	float	$tmp346	%read{461,469} %write{461,469}
+temp	point	$tmp347	%read{461,469} %write{461,469}
+temp	float	$tmp348	%read{461,469} %write{461,469}
+temp	float	$tmp349	%read{471,471} %write{470,470}
+temp	float	$tmp350	%read{473,473} %write{472,472}
+temp	float	$tmp351	%read{483,483} %write{479,479}
+const	float	$const82	55		%read{479,479} %write{2147483647,-1}
+temp	float	$tmp352	%read{479,479} %write{478,478}
+temp	vector	$tmp355	%read{482,482} %write{481,481}
+temp	float	$tmp356	%read{492,492} %write{488,488}
+temp	float	$tmp357	%read{490,490} %write{489,489}
+temp	float	$tmp358	%read{491,491} %write{490,490}
+temp	float	$tmp359	%read{492,492} %write{491,491}
+temp	float	$tmp360	%read{527,527} %write{492,492}
+temp	float	$tmp361	%read{494,494} %write{493,493}
+temp	float	$tmp362	%read{496,496} %write{494,494}
+temp	float	$tmp363	%read{496,496} %write{495,495}
+temp	float	$tmp364	%read{527,527} %write{496,496}
+temp	float	$tmp365	%read{498,498} %write{497,497}
+temp	float	$tmp366	%read{500,500} %write{498,498}
+temp	float	$tmp367	%read{500,500} %write{499,499}
+temp	float	$tmp368	%read{527,527} %write{500,500}
+temp	float	$tmp369	%read{502,502} %write{501,501}
+temp	float	$tmp370	%read{504,504} %write{502,502}
+temp	float	$tmp371	%read{504,504} %write{503,503}
+temp	float	$tmp372	%read{527,527} %write{504,504}
+temp	float	$tmp373	%read{509,509} %write{505,505}
+temp	float	$tmp374	%read{507,507} %write{506,506}
+temp	float	$tmp375	%read{508,508} %write{507,507}
+temp	float	$tmp376	%read{509,509} %write{508,508}
+temp	float	$tmp377	%read{527,527} %write{509,509}
+temp	float	$tmp378	%read{511,511} %write{510,510}
+temp	float	$tmp379	%read{513,513} %write{511,511}
+temp	float	$tmp380	%read{513,513} %write{512,512}
+temp	float	$tmp381	%read{527,527} %write{513,513}
+temp	float	$tmp382	%read{515,515} %write{514,514}
+temp	float	$tmp383	%read{517,517} %write{515,515}
+temp	float	$tmp384	%read{517,517} %write{516,516}
+temp	float	$tmp385	%read{527,527} %write{517,517}
+temp	float	$tmp386	%read{519,519} %write{518,518}
+temp	float	$tmp387	%read{521,521} %write{519,519}
+temp	float	$tmp388	%read{521,521} %write{520,520}
+temp	float	$tmp389	%read{527,527} %write{521,521}
+temp	float	$tmp390	%read{526,526} %write{522,522}
+temp	float	$tmp391	%read{524,524} %write{523,523}
+temp	float	$tmp392	%read{525,525} %write{524,524}
+temp	float	$tmp393	%read{526,526} %write{525,525}
+temp	float	$tmp394	%read{527,527} %write{526,526}
+temp	vector	$tmp395	%read{530,530} %write{529,529}
+temp	vector	$tmp396	%read{529,529} %write{528,528}
+temp	int	$tmp397	%read{533,541} %write{533,541}
+temp	int	$tmp398	%read{531,541} %write{532,541}
+temp	float	$tmp399	%read{533,541} %write{533,541}
+temp	float	$tmp400	%read{533,541} %write{533,541}
+temp	point	$tmp401	%read{533,541} %write{533,541}
+temp	float	$tmp402	%read{533,541} %write{533,541}
+temp	float	$tmp403	%read{543,543} %write{542,542}
+temp	float	$tmp404	%read{545,545} %write{544,544}
+const	float	$const83	-0.0500000007		%read{544,544} %write{2147483647,-1}
 code ___main___
-# waxDisplacement.osl:5
+# waxDisplacement.osl:28
 #     point worldPoint = transform("world", P);
-	functioncall	$const2 2 	%filename{"waxDisplacement.osl"} %line{5} %argrw{"r"}
+	functioncall	$const2 2 	%filename{"waxDisplacement.osl"} %line{28} %argrw{"r"}
 # /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:285
 # point  transform (string to, point p)  { return transform("common",to,p); }
 	transform	worldPoint $const3 $const1 P 	%filename{"/opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h"} %line{285} %argrw{"wrrr"}
-# waxDisplacement.osl:6
-#     float fuzz=0.1;
-	assign		fuzz $const4 	%filename{"waxDisplacement.osl"} %line{6} %argrw{"wr"}
-# waxDisplacement.osl:7
-#     float repeatCount=5;
-	assign		repeatCount $const5 	%line{7} %argrw{"wr"}
-# waxDisplacement.osl:8
-#     float s=mod(repeatCount*u,1);
-	mul		$tmp1 repeatCount u 	%line{8} %argrw{"wrr"}
-	functioncall	$const8 10 	%argrw{"r"}
-# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:154
-# float  mod (float  a, float  b) { return a - b*floor(a/b); }
-	div		$tmp3 $tmp1 $const7 	%filename{"/opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h"} %line{154} %argrw{"wrr"}
-	floor		$tmp2 $tmp3 	%argrw{"wr"}
-	mul		$tmp4 $const7 $tmp2 	%argrw{"wrr"}
-	sub		s $tmp1 $tmp4 	%argrw{"wrr"}
-# waxDisplacement.osl:9
-#     float t=mod(repeatCount*v,1);
-	mul		$tmp5 repeatCount v 	%filename{"waxDisplacement.osl"} %line{9} %argrw{"wrr"}
-	functioncall	$const8 16 	%argrw{"r"}
-# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:154
-# float  mod (float  a, float  b) { return a - b*floor(a/b); }
-	div		$tmp7 $tmp5 $const7 	%filename{"/opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h"} %line{154} %argrw{"wrr"}
-	floor		$tmp6 $tmp7 	%argrw{"wr"}
-	mul		$tmp8 $const7 $tmp6 	%argrw{"wrr"}
-	sub		t $tmp5 $tmp8 	%argrw{"wrr"}
-# waxDisplacement.osl:10
-#     point centre=point (0.5,0.5,0);
-	assign		centre $const9 	%filename{"waxDisplacement.osl"} %line{10} %argrw{"wr"}
-# waxDisplacement.osl:11
-#     point here=point (s,t,0);
-	point		here s t $const11 	%line{11} %argrw{"wrrr"}
-# waxDisplacement.osl:12
-#     float dist=distance(centre,here);
-	distance	dist centre here 	%line{12} %argrw{"wrr"}
-# waxDisplacement.osl:13
-#     float radius=(float) noise("cell",repeatCount*u,repeatCount*v)*0.4;
-	mul		$tmp10 repeatCount u 	%line{13} %argrw{"wrr"}
-	mul		$tmp11 repeatCount v 	%argrw{"wrr"}
-	noise		$tmp9 $const12 $tmp10 $tmp11 	%argrw{"wrrr"}
-	mul		radius $tmp9 $const13 	%argrw{"wrr"}
-# waxDisplacement.osl:14
-#     float inDisk=1-smoothstep(radius-fuzz,radius+fuzz,dist);
-	sub		$tmp13 radius fuzz 	%line{14} %argrw{"wrr"}
-	add		$tmp14 radius fuzz 	%argrw{"wrr"}
-	smoothstep	$tmp12 $tmp13 $tmp14 dist 	%argrw{"wrrr"}
-	sub		inDisk $const7 $tmp12 	%argrw{"wrr"}
+# waxDisplacement.osl:32
+#     float dist=sqrt((worldPoint[0])*(worldPoint[0])+(worldPoint[2])*(worldPoint[2]));
+	compref		$tmp1 worldPoint $const4 	%filename{"waxDisplacement.osl"} %line{32} %argrw{"wrr"}
+	compref		$tmp2 worldPoint $const4 	%argrw{"wrr"}
+	mul		$tmp3 $tmp1 $tmp2 	%argrw{"wrr"}
+	compref		$tmp4 worldPoint $const5 	%argrw{"wrr"}
+	compref		$tmp5 worldPoint $const5 	%argrw{"wrr"}
+	mul		$tmp6 $tmp4 $tmp5 	%argrw{"wrr"}
+	add		$tmp7 $tmp3 $tmp6 	%argrw{"wrr"}
+	sqrt		dist $tmp7 	%argrw{"wr"}
+# waxDisplacement.osl:33
+#     float inDisk=1-smoothstep(0.02,0.02,dist);
+	smoothstep	$tmp8 $const7 $const7 dist 	%line{33} %argrw{"wrrr"}
+	sub		inDisk $const8 $tmp8 	%argrw{"wrr"}
+# waxDisplacement.osl:34
+#     float dispHoleTop = mix(0,-1,inDisk);
+	mix		dispHoleTop $const9 $const11 inDisk 	%line{34} %argrw{"wrrr"}
+# waxDisplacement.osl:35
+#     resultF +=dispHoleTop;
+	add		resultF resultF dispHoleTop 	%line{35} %argrw{"wrr"}
+# waxDisplacement.osl:40
+#     float noiseLine=noise("uperlin",worldPoint *9);
+	mul		$tmp9 worldPoint $const14 	%line{40} %argrw{"wrr"}
+	noise		noiseLine $const12 $tmp9 	%argrw{"wrr"}
+# waxDisplacement.osl:42
+#     float smoothStart = (0.05 * noiseLine/2) *1.2;
+	mul		$tmp10 $const15 noiseLine 	%line{42} %argrw{"wrr"}
+	div		$tmp11 $tmp10 $const16 	%argrw{"wrr"}
+	mul		smoothStart $tmp11 $const17 	%argrw{"wrr"}
+# waxDisplacement.osl:43
+#     float smoothEnd = (0.1 * noiseLine/2) *1.2;
+	mul		$tmp12 $const18 noiseLine 	%line{43} %argrw{"wrr"}
+	div		$tmp13 $tmp12 $const16 	%argrw{"wrr"}
+	mul		smoothEnd $tmp13 $const17 	%argrw{"wrr"}
+# waxDisplacement.osl:44
+#     float inLine = lines(noiseLine, smoothStart, smoothEnd, worldPoint[0], worldPoint[0] - 0.2, worldPoint[1] + 0.2, worldPoint[1]-1.1, worldPoint[2]+ 0.30, worldPoint[2]+0.27);
+	compref		$tmp14 worldPoint $const4 	%line{44} %argrw{"wrr"}
+	compref		$tmp15 worldPoint $const4 	%argrw{"wrr"}
+	sub		$tmp16 $tmp15 $const19 	%argrw{"wrr"}
+	compref		$tmp17 worldPoint $const6 	%argrw{"wrr"}
+	add		$tmp18 $tmp17 $const19 	%argrw{"wrr"}
+	compref		$tmp19 worldPoint $const6 	%argrw{"wrr"}
+	sub		$tmp20 $tmp19 $const20 	%argrw{"wrr"}
+	compref		$tmp21 worldPoint $const5 	%argrw{"wrr"}
+	add		$tmp22 $tmp21 $const21 	%argrw{"wrr"}
+	compref		$tmp23 worldPoint $const5 	%argrw{"wrr"}
+	add		$tmp24 $tmp23 $const22 	%argrw{"wrr"}
+	functioncall	$const23 45 	%argrw{"r"}
 # waxDisplacement.osl:15
-#     resultF=inDisk*0.01;
-	mul		resultF inDisk $const14 	%line{15} %argrw{"wrr"}
-# waxDisplacement.osl:18
-#     resultF=noise("perlin",worldPoint*5)*0.1;
-	mul		$tmp16 worldPoint $const16 	%line{18} %argrw{"wrr"}
-	noise		$tmp15 $const15 $tmp16 	%argrw{"wrr"}
-	mul		resultF $tmp15 $const4 	%argrw{"wrr"}
-# waxDisplacement.osl:19
-#     resultF+=noise("perlin",worldPoint*10)*0.1/2;
-	mul		$tmp18 worldPoint $const18 	%line{19} %argrw{"wrr"}
-	noise		$tmp17 $const15 $tmp18 	%argrw{"wrr"}
-	mul		$tmp19 $tmp17 $const4 	%argrw{"wrr"}
-	div		$tmp20 $tmp19 $const20 	%argrw{"wrr"}
-	add		resultF resultF $tmp20 	%argrw{"wrr"}
+#     float inLineX = smoothstep(smoothStart, smoothEnd, xPosStart) - smoothstep(smoothStart, smoothEnd, xPosEnd);
+	smoothstep	$tmp25 smoothStart smoothEnd $tmp14 	%line{15} %argrw{"wrrr"}
+	smoothstep	$tmp26 smoothStart smoothEnd $tmp16 	%argrw{"wrrr"}
+	sub		___325_inLineX $tmp25 $tmp26 	%argrw{"wrr"}
+# waxDisplacement.osl:16
+#     float inLineY = smoothstep(smoothStart, smoothEnd, yPosStart) - smoothstep(smoothStart, smoothEnd, yPosEnd);
+	smoothstep	$tmp27 smoothStart smoothEnd $tmp18 	%line{16} %argrw{"wrrr"}
+	smoothstep	$tmp28 smoothStart smoothEnd $tmp20 	%argrw{"wrrr"}
+	sub		___325_inLineY $tmp27 $tmp28 	%argrw{"wrr"}
+# waxDisplacement.osl:17
+#     float inLineZ = smoothstep(smoothStart, smoothEnd, zPosStart) - smoothstep(smoothStart, smoothEnd, zPosEnd);
+	smoothstep	$tmp29 smoothStart smoothEnd $tmp22 	%line{17} %argrw{"wrrr"}
+	smoothstep	$tmp30 smoothStart smoothEnd $tmp24 	%argrw{"wrrr"}
+	sub		___325_inLineZ $tmp29 $tmp30 	%argrw{"wrr"}
 # waxDisplacement.osl:20
-#     resultF+=noise("perlin",worldPoint*21)*0.1/4;
-	mul		$tmp22 worldPoint $const22 	%line{20} %argrw{"wrr"}
-	noise		$tmp21 $const15 $tmp22 	%argrw{"wrr"}
-	mul		$tmp23 $tmp21 $const4 	%argrw{"wrr"}
-	div		$tmp24 $tmp23 $const24 	%argrw{"wrr"}
-	add		resultF resultF $tmp24 	%argrw{"wrr"}
+#     return inLineX * inLineY * inLineZ;
+	mul		$tmp31 ___325_inLineX ___325_inLineY 	%line{20} %argrw{"wrr"}
+	mul		inLine $tmp31 ___325_inLineZ 	%argrw{"wrr"}
+# waxDisplacement.osl:46
+#     float noiseDispAmount = 0.01 * noise("uperlin", worldPoint * 10);
+	mul		$tmp33 worldPoint $const26 	%line{46} %argrw{"wrr"}
+	noise		$tmp32 $const12 $tmp33 	%argrw{"wrr"}
+	mul		noiseDispAmount $const24 $tmp32 	%argrw{"wrr"}
+# waxDisplacement.osl:48
+#     float dispLine = mix(0,noiseDispAmount, inLine);
+	mix		dispLine $const9 noiseDispAmount inLine 	%line{48} %argrw{"wrrr"}
+# waxDisplacement.osl:49
+#     resultF +=dispLine;
+	add		resultF resultF dispLine 	%line{49} %argrw{"wrr"}
+# waxDisplacement.osl:53
+#     noiseLine=noise("uperlin",worldPoint *20);
+	mul		$tmp34 worldPoint $const28 	%line{53} %argrw{"wrr"}
+	noise		noiseLine $const12 $tmp34 	%argrw{"wrr"}
+# waxDisplacement.osl:54
+#     inLine = lines(noiseLine, smoothStart, smoothEnd, worldPoint[0]+0.02, worldPoint[0] -0.02, worldPoint[1] - 0.95, worldPoint[1]-1.2, worldPoint[2]+1, worldPoint[2]);
+	compref		$tmp35 worldPoint $const4 	%line{54} %argrw{"wrr"}
+	add		$tmp36 $tmp35 $const7 	%argrw{"wrr"}
+	compref		$tmp37 worldPoint $const4 	%argrw{"wrr"}
+	sub		$tmp38 $tmp37 $const7 	%argrw{"wrr"}
+	compref		$tmp39 worldPoint $const6 	%argrw{"wrr"}
+	sub		$tmp40 $tmp39 $const29 	%argrw{"wrr"}
+	compref		$tmp41 worldPoint $const6 	%argrw{"wrr"}
+	sub		$tmp42 $tmp41 $const17 	%argrw{"wrr"}
+	compref		$tmp43 worldPoint $const5 	%argrw{"wrr"}
+	add		$tmp44 $tmp43 $const8 	%argrw{"wrr"}
+	compref		$tmp45 worldPoint $const5 	%argrw{"wrr"}
+	functioncall	$const23 75 	%argrw{"r"}
+# waxDisplacement.osl:15
+#     float inLineX = smoothstep(smoothStart, smoothEnd, xPosStart) - smoothstep(smoothStart, smoothEnd, xPosEnd);
+	smoothstep	$tmp46 smoothStart smoothEnd $tmp36 	%line{15} %argrw{"wrrr"}
+	smoothstep	$tmp47 smoothStart smoothEnd $tmp38 	%argrw{"wrrr"}
+	sub		___325_inLineX $tmp46 $tmp47 	%argrw{"wrr"}
+# waxDisplacement.osl:16
+#     float inLineY = smoothstep(smoothStart, smoothEnd, yPosStart) - smoothstep(smoothStart, smoothEnd, yPosEnd);
+	smoothstep	$tmp48 smoothStart smoothEnd $tmp40 	%line{16} %argrw{"wrrr"}
+	smoothstep	$tmp49 smoothStart smoothEnd $tmp42 	%argrw{"wrrr"}
+	sub		___325_inLineY $tmp48 $tmp49 	%argrw{"wrr"}
+# waxDisplacement.osl:17
+#     float inLineZ = smoothstep(smoothStart, smoothEnd, zPosStart) - smoothstep(smoothStart, smoothEnd, zPosEnd);
+	smoothstep	$tmp50 smoothStart smoothEnd $tmp44 	%line{17} %argrw{"wrrr"}
+	smoothstep	$tmp51 smoothStart smoothEnd $tmp45 	%argrw{"wrrr"}
+	sub		___325_inLineZ $tmp50 $tmp51 	%argrw{"wrr"}
+# waxDisplacement.osl:20
+#     return inLineX * inLineY * inLineZ;
+	mul		$tmp52 ___325_inLineX ___325_inLineY 	%line{20} %argrw{"wrr"}
+	mul		inLine $tmp52 ___325_inLineZ 	%argrw{"wrr"}
+# waxDisplacement.osl:56
+#     noiseDispAmount = 0.01 * noise("uperlin", worldPoint * 10);
+	mul		$tmp54 worldPoint $const26 	%line{56} %argrw{"wrr"}
+	noise		$tmp53 $const12 $tmp54 	%argrw{"wrr"}
+	mul		noiseDispAmount $const24 $tmp53 	%argrw{"wrr"}
+# waxDisplacement.osl:58
+#     dispLine = mix(0,noiseDispAmount, inLine);
+	mix		dispLine $const9 noiseDispAmount inLine 	%line{58} %argrw{"wrrr"}
+# waxDisplacement.osl:59
+#     resultF +=dispLine;
+	add		resultF resultF dispLine 	%line{59} %argrw{"wrr"}
+# waxDisplacement.osl:64
+#     point pointLineTop = point(worldPoint[0], worldPoint[1], worldPoint[2]) + point(-0.09,0,0);
+	compref		$tmp56 worldPoint $const4 	%line{64} %argrw{"wrr"}
+	compref		$tmp57 worldPoint $const6 	%argrw{"wrr"}
+	compref		$tmp58 worldPoint $const5 	%argrw{"wrr"}
+	point		$tmp55 $tmp56 $tmp57 $tmp58 	%argrw{"wrrr"}
+	add		pointLineTop $tmp55 $const30 	%argrw{"wrr"}
+# waxDisplacement.osl:65
+#     noiseLine=noise("perlin",pointLineTop *9);
+	mul		$tmp60 pointLineTop $const14 	%line{65} %argrw{"wrr"}
+	noise		noiseLine $const31 $tmp60 	%argrw{"wrr"}
+# waxDisplacement.osl:67
+#     smoothStart = (0.05 * noiseLine * 3)*1.2;
+	mul		$tmp61 $const15 noiseLine 	%line{67} %argrw{"wrr"}
+	mul		$tmp62 $tmp61 $const33 	%argrw{"wrr"}
+	mul		smoothStart $tmp62 $const17 	%argrw{"wrr"}
+# waxDisplacement.osl:68
+#     smoothEnd = 0.1 * noiseLine;
+	mul		smoothEnd $const18 noiseLine 	%line{68} %argrw{"wrr"}
+# waxDisplacement.osl:69
+#     point rotXP = rotate(pointLineTop, radians(45), point(0,0,0), point(0,1,0));
+	functioncall	$const36 94 	%line{69} %argrw{"r"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:88
+# float  radians (float x)  { return x*(M_PI/180.0); }
+	div		$tmp64 $const37 $const38 	%filename{"/opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h"} %line{88} %argrw{"wrr"}
+	mul		$tmp63 $const35 $tmp64 	%argrw{"wrr"}
+# waxDisplacement.osl:69
+#     point rotXP = rotate(pointLineTop, radians(45), point(0,0,0), point(0,1,0));
+	functioncall	$const41 145 	%filename{"waxDisplacement.osl"} %line{69} %argrw{"r"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:292
+#     vector axis = normalize (b - a);
+	sub		$tmp67 $const40 $const39 	%filename{"/opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h"} %line{292} %argrw{"wrr"}
+	normalize	___252_axis $tmp67 	%argrw{"wr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:294
+#     sincos (angle, sinang, cosang);
+	sincos		$tmp63 ___252_sinang ___252_cosang 	%line{294} %argrw{"rww"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:295
+#     float cosang1 = 1.0 - cosang;
+	sub		___252_cosang1 $const8 ___252_cosang 	%line{295} %argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:296
+#     float x = axis[0], y = axis[1], z = axis[2];
+	compref		___252_x ___252_axis $const4 	%line{296} %argrw{"wrr"}
+	compref		___252_y ___252_axis $const6 	%argrw{"wrr"}
+	compref		___252_z ___252_axis $const5 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:297
+#     matrix M = matrix (x * x + (1.0 - x * x) * cosang,
+	mul		$tmp68 ___252_x ___252_x 	%line{297} %argrw{"wrr"}
+	mul		$tmp69 ___252_x ___252_x 	%argrw{"wrr"}
+	sub		$tmp70 $const8 $tmp69 	%argrw{"wrr"}
+	mul		$tmp71 $tmp70 ___252_cosang 	%argrw{"wrr"}
+	add		$tmp72 $tmp68 $tmp71 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:298
+#                        x * y * cosang1 + z * sinang,
+	mul		$tmp73 ___252_x ___252_y 	%line{298} %argrw{"wrr"}
+	mul		$tmp74 $tmp73 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp75 ___252_z ___252_sinang 	%argrw{"wrr"}
+	add		$tmp76 $tmp74 $tmp75 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:299
+#                        x * z * cosang1 - y * sinang,
+	mul		$tmp77 ___252_x ___252_z 	%line{299} %argrw{"wrr"}
+	mul		$tmp78 $tmp77 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp79 ___252_y ___252_sinang 	%argrw{"wrr"}
+	sub		$tmp80 $tmp78 $tmp79 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:301
+#                        x * y * cosang1 - z * sinang,
+	mul		$tmp81 ___252_x ___252_y 	%line{301} %argrw{"wrr"}
+	mul		$tmp82 $tmp81 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp83 ___252_z ___252_sinang 	%argrw{"wrr"}
+	sub		$tmp84 $tmp82 $tmp83 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:302
+#                        y * y + (1.0 - y * y) * cosang,
+	mul		$tmp85 ___252_y ___252_y 	%line{302} %argrw{"wrr"}
+	mul		$tmp86 ___252_y ___252_y 	%argrw{"wrr"}
+	sub		$tmp87 $const8 $tmp86 	%argrw{"wrr"}
+	mul		$tmp88 $tmp87 ___252_cosang 	%argrw{"wrr"}
+	add		$tmp89 $tmp85 $tmp88 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:303
+#                        y * z * cosang1 + x * sinang,
+	mul		$tmp90 ___252_y ___252_z 	%line{303} %argrw{"wrr"}
+	mul		$tmp91 $tmp90 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp92 ___252_x ___252_sinang 	%argrw{"wrr"}
+	add		$tmp93 $tmp91 $tmp92 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:305
+#                        x * z * cosang1 + y * sinang,
+	mul		$tmp94 ___252_x ___252_z 	%line{305} %argrw{"wrr"}
+	mul		$tmp95 $tmp94 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp96 ___252_y ___252_sinang 	%argrw{"wrr"}
+	add		$tmp97 $tmp95 $tmp96 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:306
+#                        y * z * cosang1 - x * sinang,
+	mul		$tmp98 ___252_y ___252_z 	%line{306} %argrw{"wrr"}
+	mul		$tmp99 $tmp98 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp100 ___252_x ___252_sinang 	%argrw{"wrr"}
+	sub		$tmp101 $tmp99 $tmp100 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:307
+#                        z * z + (1.0 - z * z) * cosang,
+	mul		$tmp102 ___252_z ___252_z 	%line{307} %argrw{"wrr"}
+	mul		$tmp103 ___252_z ___252_z 	%argrw{"wrr"}
+	sub		$tmp104 $const8 $tmp103 	%argrw{"wrr"}
+	mul		$tmp105 $tmp104 ___252_cosang 	%argrw{"wrr"}
+	add		$tmp106 $tmp102 $tmp105 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:297
+#     matrix M = matrix (x * x + (1.0 - x * x) * cosang,
+	matrix		___252_M $tmp72 $tmp76 $tmp80 $const9 $tmp84 $tmp89 $tmp93 $const9 $tmp97 $tmp101 $tmp106 $const9 $const9 $const9 $const9 $const8 	%line{297} %argrw{"wrrrrrrrrrrrrrrrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:310
+#     return transform (M, p-a) + a;
+	sub		$tmp108 pointLineTop $const39 	%line{310} %argrw{"wrr"}
+	transformv	$tmp107 ___252_M $tmp108 	%argrw{"wrr"}
+	add		rotXP $tmp107 $const39 	%argrw{"wrr"}
+# waxDisplacement.osl:70
+#     inLine = lines(noiseLine, smoothStart, smoothEnd, rotXP[0] + 0.08, rotXP[0], pointLineTop[1]-1.25, pointLineTop[1]-1.7, pointLineTop[2]+0.3, pointLineTop[2]);
+	compref		$tmp109 rotXP $const4 	%filename{"waxDisplacement.osl"} %line{70} %argrw{"wrr"}
+	add		$tmp110 $tmp109 $const42 	%argrw{"wrr"}
+	compref		$tmp111 rotXP $const4 	%argrw{"wrr"}
+	compref		$tmp112 pointLineTop $const6 	%argrw{"wrr"}
+	sub		$tmp113 $tmp112 $const43 	%argrw{"wrr"}
+	compref		$tmp114 pointLineTop $const6 	%argrw{"wrr"}
+	sub		$tmp115 $tmp114 $const44 	%argrw{"wrr"}
+	compref		$tmp116 pointLineTop $const5 	%argrw{"wrr"}
+	add		$tmp117 $tmp116 $const21 	%argrw{"wrr"}
+	compref		$tmp118 pointLineTop $const5 	%argrw{"wrr"}
+	functioncall	$const23 167 	%argrw{"r"}
+# waxDisplacement.osl:15
+#     float inLineX = smoothstep(smoothStart, smoothEnd, xPosStart) - smoothstep(smoothStart, smoothEnd, xPosEnd);
+	smoothstep	$tmp119 smoothStart smoothEnd $tmp110 	%line{15} %argrw{"wrrr"}
+	smoothstep	$tmp120 smoothStart smoothEnd $tmp111 	%argrw{"wrrr"}
+	sub		___325_inLineX $tmp119 $tmp120 	%argrw{"wrr"}
+# waxDisplacement.osl:16
+#     float inLineY = smoothstep(smoothStart, smoothEnd, yPosStart) - smoothstep(smoothStart, smoothEnd, yPosEnd);
+	smoothstep	$tmp121 smoothStart smoothEnd $tmp113 	%line{16} %argrw{"wrrr"}
+	smoothstep	$tmp122 smoothStart smoothEnd $tmp115 	%argrw{"wrrr"}
+	sub		___325_inLineY $tmp121 $tmp122 	%argrw{"wrr"}
+# waxDisplacement.osl:17
+#     float inLineZ = smoothstep(smoothStart, smoothEnd, zPosStart) - smoothstep(smoothStart, smoothEnd, zPosEnd);
+	smoothstep	$tmp123 smoothStart smoothEnd $tmp117 	%line{17} %argrw{"wrrr"}
+	smoothstep	$tmp124 smoothStart smoothEnd $tmp118 	%argrw{"wrrr"}
+	sub		___325_inLineZ $tmp123 $tmp124 	%argrw{"wrr"}
+# waxDisplacement.osl:20
+#     return inLineX * inLineY * inLineZ;
+	mul		$tmp125 ___325_inLineX ___325_inLineY 	%line{20} %argrw{"wrr"}
+	mul		inLine $tmp125 ___325_inLineZ 	%argrw{"wrr"}
+# waxDisplacement.osl:72
+#     noiseDispAmount = 0.009 * noise("uperlin", pointLineTop * 10);
+	mul		$tmp127 pointLineTop $const26 	%line{72} %argrw{"wrr"}
+	noise		$tmp126 $const12 $tmp127 	%argrw{"wrr"}
+	mul		noiseDispAmount $const45 $tmp126 	%argrw{"wrr"}
+# waxDisplacement.osl:74
+#     dispLine = mix(0,noiseDispAmount, inLine);
+	mix		dispLine $const9 noiseDispAmount inLine 	%line{74} %argrw{"wrrr"}
+# waxDisplacement.osl:75
+#     resultF +=dispLine;
+	add		resultF resultF dispLine 	%line{75} %argrw{"wrr"}
+# waxDisplacement.osl:79
+#     noiseLine=noise("uperlin",worldPoint *15);
+	mul		$tmp128 worldPoint $const47 	%line{79} %argrw{"wrr"}
+	noise		noiseLine $const12 $tmp128 	%argrw{"wrr"}
+# waxDisplacement.osl:80
+#     rotXP = rotate(worldPoint, radians(0), point(0,0,0), point(0,1,0));
+	functioncall	$const36 177 	%line{80} %argrw{"r"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:88
+# float  radians (float x)  { return x*(M_PI/180.0); }
+	div		$tmp130 $const37 $const38 	%filename{"/opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h"} %line{88} %argrw{"wrr"}
+	mul		$tmp129 $const9 $tmp130 	%argrw{"wrr"}
+# waxDisplacement.osl:80
+#     rotXP = rotate(worldPoint, radians(0), point(0,0,0), point(0,1,0));
+	functioncall	$const41 228 	%filename{"waxDisplacement.osl"} %line{80} %argrw{"r"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:292
+#     vector axis = normalize (b - a);
+	sub		$tmp133 $const40 $const39 	%filename{"/opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h"} %line{292} %argrw{"wrr"}
+	normalize	___252_axis $tmp133 	%argrw{"wr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:294
+#     sincos (angle, sinang, cosang);
+	sincos		$tmp129 ___252_sinang ___252_cosang 	%line{294} %argrw{"rww"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:295
+#     float cosang1 = 1.0 - cosang;
+	sub		___252_cosang1 $const8 ___252_cosang 	%line{295} %argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:296
+#     float x = axis[0], y = axis[1], z = axis[2];
+	compref		___252_x ___252_axis $const4 	%line{296} %argrw{"wrr"}
+	compref		___252_y ___252_axis $const6 	%argrw{"wrr"}
+	compref		___252_z ___252_axis $const5 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:297
+#     matrix M = matrix (x * x + (1.0 - x * x) * cosang,
+	mul		$tmp134 ___252_x ___252_x 	%line{297} %argrw{"wrr"}
+	mul		$tmp135 ___252_x ___252_x 	%argrw{"wrr"}
+	sub		$tmp136 $const8 $tmp135 	%argrw{"wrr"}
+	mul		$tmp137 $tmp136 ___252_cosang 	%argrw{"wrr"}
+	add		$tmp138 $tmp134 $tmp137 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:298
+#                        x * y * cosang1 + z * sinang,
+	mul		$tmp139 ___252_x ___252_y 	%line{298} %argrw{"wrr"}
+	mul		$tmp140 $tmp139 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp141 ___252_z ___252_sinang 	%argrw{"wrr"}
+	add		$tmp142 $tmp140 $tmp141 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:299
+#                        x * z * cosang1 - y * sinang,
+	mul		$tmp143 ___252_x ___252_z 	%line{299} %argrw{"wrr"}
+	mul		$tmp144 $tmp143 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp145 ___252_y ___252_sinang 	%argrw{"wrr"}
+	sub		$tmp146 $tmp144 $tmp145 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:301
+#                        x * y * cosang1 - z * sinang,
+	mul		$tmp147 ___252_x ___252_y 	%line{301} %argrw{"wrr"}
+	mul		$tmp148 $tmp147 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp149 ___252_z ___252_sinang 	%argrw{"wrr"}
+	sub		$tmp150 $tmp148 $tmp149 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:302
+#                        y * y + (1.0 - y * y) * cosang,
+	mul		$tmp151 ___252_y ___252_y 	%line{302} %argrw{"wrr"}
+	mul		$tmp152 ___252_y ___252_y 	%argrw{"wrr"}
+	sub		$tmp153 $const8 $tmp152 	%argrw{"wrr"}
+	mul		$tmp154 $tmp153 ___252_cosang 	%argrw{"wrr"}
+	add		$tmp155 $tmp151 $tmp154 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:303
+#                        y * z * cosang1 + x * sinang,
+	mul		$tmp156 ___252_y ___252_z 	%line{303} %argrw{"wrr"}
+	mul		$tmp157 $tmp156 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp158 ___252_x ___252_sinang 	%argrw{"wrr"}
+	add		$tmp159 $tmp157 $tmp158 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:305
+#                        x * z * cosang1 + y * sinang,
+	mul		$tmp160 ___252_x ___252_z 	%line{305} %argrw{"wrr"}
+	mul		$tmp161 $tmp160 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp162 ___252_y ___252_sinang 	%argrw{"wrr"}
+	add		$tmp163 $tmp161 $tmp162 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:306
+#                        y * z * cosang1 - x * sinang,
+	mul		$tmp164 ___252_y ___252_z 	%line{306} %argrw{"wrr"}
+	mul		$tmp165 $tmp164 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp166 ___252_x ___252_sinang 	%argrw{"wrr"}
+	sub		$tmp167 $tmp165 $tmp166 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:307
+#                        z * z + (1.0 - z * z) * cosang,
+	mul		$tmp168 ___252_z ___252_z 	%line{307} %argrw{"wrr"}
+	mul		$tmp169 ___252_z ___252_z 	%argrw{"wrr"}
+	sub		$tmp170 $const8 $tmp169 	%argrw{"wrr"}
+	mul		$tmp171 $tmp170 ___252_cosang 	%argrw{"wrr"}
+	add		$tmp172 $tmp168 $tmp171 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:297
+#     matrix M = matrix (x * x + (1.0 - x * x) * cosang,
+	matrix		___252_M $tmp138 $tmp142 $tmp146 $const9 $tmp150 $tmp155 $tmp159 $const9 $tmp163 $tmp167 $tmp172 $const9 $const9 $const9 $const9 $const8 	%line{297} %argrw{"wrrrrrrrrrrrrrrrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:310
+#     return transform (M, p-a) + a;
+	sub		$tmp174 worldPoint $const39 	%line{310} %argrw{"wrr"}
+	transformv	$tmp173 ___252_M $tmp174 	%argrw{"wrr"}
+	add		rotXP $tmp173 $const39 	%argrw{"wrr"}
+# waxDisplacement.osl:81
+#     inLine = lines(noiseLine, smoothStart, smoothEnd, worldPoint[0]-0.4, worldPoint[0] -0.42, worldPoint[1]-1.5, worldPoint[1]-1.7, worldPoint[2]+0.07, worldPoint[2]);
+	compref		$tmp175 worldPoint $const4 	%filename{"waxDisplacement.osl"} %line{81} %argrw{"wrr"}
+	sub		$tmp176 $tmp175 $const48 	%argrw{"wrr"}
+	compref		$tmp177 worldPoint $const4 	%argrw{"wrr"}
+	sub		$tmp178 $tmp177 $const49 	%argrw{"wrr"}
+	compref		$tmp179 worldPoint $const6 	%argrw{"wrr"}
+	sub		$tmp180 $tmp179 $const50 	%argrw{"wrr"}
+	compref		$tmp181 worldPoint $const6 	%argrw{"wrr"}
+	sub		$tmp182 $tmp181 $const44 	%argrw{"wrr"}
+	compref		$tmp183 worldPoint $const5 	%argrw{"wrr"}
+	add		$tmp184 $tmp183 $const51 	%argrw{"wrr"}
+	compref		$tmp185 worldPoint $const5 	%argrw{"wrr"}
+	functioncall	$const23 251 	%argrw{"r"}
+# waxDisplacement.osl:15
+#     float inLineX = smoothstep(smoothStart, smoothEnd, xPosStart) - smoothstep(smoothStart, smoothEnd, xPosEnd);
+	smoothstep	$tmp186 smoothStart smoothEnd $tmp176 	%line{15} %argrw{"wrrr"}
+	smoothstep	$tmp187 smoothStart smoothEnd $tmp178 	%argrw{"wrrr"}
+	sub		___325_inLineX $tmp186 $tmp187 	%argrw{"wrr"}
+# waxDisplacement.osl:16
+#     float inLineY = smoothstep(smoothStart, smoothEnd, yPosStart) - smoothstep(smoothStart, smoothEnd, yPosEnd);
+	smoothstep	$tmp188 smoothStart smoothEnd $tmp180 	%line{16} %argrw{"wrrr"}
+	smoothstep	$tmp189 smoothStart smoothEnd $tmp182 	%argrw{"wrrr"}
+	sub		___325_inLineY $tmp188 $tmp189 	%argrw{"wrr"}
+# waxDisplacement.osl:17
+#     float inLineZ = smoothstep(smoothStart, smoothEnd, zPosStart) - smoothstep(smoothStart, smoothEnd, zPosEnd);
+	smoothstep	$tmp190 smoothStart smoothEnd $tmp184 	%line{17} %argrw{"wrrr"}
+	smoothstep	$tmp191 smoothStart smoothEnd $tmp185 	%argrw{"wrrr"}
+	sub		___325_inLineZ $tmp190 $tmp191 	%argrw{"wrr"}
+# waxDisplacement.osl:20
+#     return inLineX * inLineY * inLineZ;
+	mul		$tmp192 ___325_inLineX ___325_inLineY 	%line{20} %argrw{"wrr"}
+	mul		inLine $tmp192 ___325_inLineZ 	%argrw{"wrr"}
+# waxDisplacement.osl:83
+#     noiseDispAmount = 0.01 * noise("uperlin", worldPoint * 10);
+	mul		$tmp194 worldPoint $const26 	%line{83} %argrw{"wrr"}
+	noise		$tmp193 $const12 $tmp194 	%argrw{"wrr"}
+	mul		noiseDispAmount $const24 $tmp193 	%argrw{"wrr"}
+# waxDisplacement.osl:85
+#     dispLine = mix(0,noiseDispAmount, inLine);
+	mix		dispLine $const9 noiseDispAmount inLine 	%line{85} %argrw{"wrrr"}
+# waxDisplacement.osl:86
+#     resultF +=dispLine;
+	add		resultF resultF dispLine 	%line{86} %argrw{"wrr"}
+# waxDisplacement.osl:90
+#     dist=sqrt((worldPoint[0]-0.27)*(worldPoint[0]-0.27)+(worldPoint[1]-0.24)*(worldPoint[1]-0.24));
+	compref		$tmp195 worldPoint $const4 	%line{90} %argrw{"wrr"}
+	sub		$tmp196 $tmp195 $const22 	%argrw{"wrr"}
+	compref		$tmp197 worldPoint $const4 	%argrw{"wrr"}
+	sub		$tmp198 $tmp197 $const22 	%argrw{"wrr"}
+	mul		$tmp199 $tmp196 $tmp198 	%argrw{"wrr"}
+	compref		$tmp200 worldPoint $const6 	%argrw{"wrr"}
+	sub		$tmp201 $tmp200 $const52 	%argrw{"wrr"}
+	compref		$tmp202 worldPoint $const6 	%argrw{"wrr"}
+	sub		$tmp203 $tmp202 $const52 	%argrw{"wrr"}
+	mul		$tmp204 $tmp201 $tmp203 	%argrw{"wrr"}
+	add		$tmp205 $tmp199 $tmp204 	%argrw{"wrr"}
+	sqrt		dist $tmp205 	%argrw{"wr"}
+# waxDisplacement.osl:91
+#     inDisk=1-smoothstep(0.02 * noiseLine,0.02 * noiseLine,dist * 0.6);
+	mul		$tmp207 $const7 noiseLine 	%line{91} %argrw{"wrr"}
+	mul		$tmp208 $const7 noiseLine 	%argrw{"wrr"}
+	mul		$tmp209 dist $const53 	%argrw{"wrr"}
+	smoothstep	$tmp206 $tmp207 $tmp208 $tmp209 	%argrw{"wrrr"}
+	sub		inDisk $const8 $tmp206 	%argrw{"wrr"}
+# waxDisplacement.osl:92
+#     noiseDispAmount = 0.01 * noise("uperlin", worldPoint * 10);
+	mul		$tmp211 worldPoint $const26 	%line{92} %argrw{"wrr"}
+	noise		$tmp210 $const12 $tmp211 	%argrw{"wrr"}
+	mul		noiseDispAmount $const24 $tmp210 	%argrw{"wrr"}
+# waxDisplacement.osl:93
+#     resultF =mix(resultF,noiseDispAmount,inDisk);
+	mix		resultF resultF noiseDispAmount inDisk 	%line{93} %argrw{"wrrr"}
+# waxDisplacement.osl:97
+#     noiseLine=noise("uperlin",worldPoint *9);
+	mul		$tmp212 worldPoint $const14 	%line{97} %argrw{"wrr"}
+	noise		noiseLine $const12 $tmp212 	%argrw{"wrr"}
+# waxDisplacement.osl:99
+#     smoothStart = (0.05 * noiseLine/2) *1.2;
+	mul		$tmp213 $const15 noiseLine 	%line{99} %argrw{"wrr"}
+	div		$tmp214 $tmp213 $const16 	%argrw{"wrr"}
+	mul		smoothStart $tmp214 $const17 	%argrw{"wrr"}
+# waxDisplacement.osl:100
+#     smoothEnd = (0.1 * noiseLine/2) *1.2;
+	mul		$tmp215 $const18 noiseLine 	%line{100} %argrw{"wrr"}
+	div		$tmp216 $tmp215 $const16 	%argrw{"wrr"}
+	mul		smoothEnd $tmp216 $const17 	%argrw{"wrr"}
+# waxDisplacement.osl:101
+#     point rotYP = rotate(worldPoint, radians(-45), point(0,0,0), point(1,1,0));
+	functioncall	$const36 288 	%line{101} %argrw{"r"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:88
+# float  radians (float x)  { return x*(M_PI/180.0); }
+	div		$tmp218 $const37 $const38 	%filename{"/opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h"} %line{88} %argrw{"wrr"}
+	mul		$tmp217 $const55 $tmp218 	%argrw{"wrr"}
+# waxDisplacement.osl:101
+#     point rotYP = rotate(worldPoint, radians(-45), point(0,0,0), point(1,1,0));
+	functioncall	$const41 339 	%filename{"waxDisplacement.osl"} %line{101} %argrw{"r"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:292
+#     vector axis = normalize (b - a);
+	sub		$tmp221 $const56 $const39 	%filename{"/opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h"} %line{292} %argrw{"wrr"}
+	normalize	___252_axis $tmp221 	%argrw{"wr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:294
+#     sincos (angle, sinang, cosang);
+	sincos		$tmp217 ___252_sinang ___252_cosang 	%line{294} %argrw{"rww"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:295
+#     float cosang1 = 1.0 - cosang;
+	sub		___252_cosang1 $const8 ___252_cosang 	%line{295} %argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:296
+#     float x = axis[0], y = axis[1], z = axis[2];
+	compref		___252_x ___252_axis $const4 	%line{296} %argrw{"wrr"}
+	compref		___252_y ___252_axis $const6 	%argrw{"wrr"}
+	compref		___252_z ___252_axis $const5 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:297
+#     matrix M = matrix (x * x + (1.0 - x * x) * cosang,
+	mul		$tmp222 ___252_x ___252_x 	%line{297} %argrw{"wrr"}
+	mul		$tmp223 ___252_x ___252_x 	%argrw{"wrr"}
+	sub		$tmp224 $const8 $tmp223 	%argrw{"wrr"}
+	mul		$tmp225 $tmp224 ___252_cosang 	%argrw{"wrr"}
+	add		$tmp226 $tmp222 $tmp225 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:298
+#                        x * y * cosang1 + z * sinang,
+	mul		$tmp227 ___252_x ___252_y 	%line{298} %argrw{"wrr"}
+	mul		$tmp228 $tmp227 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp229 ___252_z ___252_sinang 	%argrw{"wrr"}
+	add		$tmp230 $tmp228 $tmp229 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:299
+#                        x * z * cosang1 - y * sinang,
+	mul		$tmp231 ___252_x ___252_z 	%line{299} %argrw{"wrr"}
+	mul		$tmp232 $tmp231 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp233 ___252_y ___252_sinang 	%argrw{"wrr"}
+	sub		$tmp234 $tmp232 $tmp233 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:301
+#                        x * y * cosang1 - z * sinang,
+	mul		$tmp235 ___252_x ___252_y 	%line{301} %argrw{"wrr"}
+	mul		$tmp236 $tmp235 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp237 ___252_z ___252_sinang 	%argrw{"wrr"}
+	sub		$tmp238 $tmp236 $tmp237 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:302
+#                        y * y + (1.0 - y * y) * cosang,
+	mul		$tmp239 ___252_y ___252_y 	%line{302} %argrw{"wrr"}
+	mul		$tmp240 ___252_y ___252_y 	%argrw{"wrr"}
+	sub		$tmp241 $const8 $tmp240 	%argrw{"wrr"}
+	mul		$tmp242 $tmp241 ___252_cosang 	%argrw{"wrr"}
+	add		$tmp243 $tmp239 $tmp242 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:303
+#                        y * z * cosang1 + x * sinang,
+	mul		$tmp244 ___252_y ___252_z 	%line{303} %argrw{"wrr"}
+	mul		$tmp245 $tmp244 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp246 ___252_x ___252_sinang 	%argrw{"wrr"}
+	add		$tmp247 $tmp245 $tmp246 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:305
+#                        x * z * cosang1 + y * sinang,
+	mul		$tmp248 ___252_x ___252_z 	%line{305} %argrw{"wrr"}
+	mul		$tmp249 $tmp248 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp250 ___252_y ___252_sinang 	%argrw{"wrr"}
+	add		$tmp251 $tmp249 $tmp250 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:306
+#                        y * z * cosang1 - x * sinang,
+	mul		$tmp252 ___252_y ___252_z 	%line{306} %argrw{"wrr"}
+	mul		$tmp253 $tmp252 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp254 ___252_x ___252_sinang 	%argrw{"wrr"}
+	sub		$tmp255 $tmp253 $tmp254 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:307
+#                        z * z + (1.0 - z * z) * cosang,
+	mul		$tmp256 ___252_z ___252_z 	%line{307} %argrw{"wrr"}
+	mul		$tmp257 ___252_z ___252_z 	%argrw{"wrr"}
+	sub		$tmp258 $const8 $tmp257 	%argrw{"wrr"}
+	mul		$tmp259 $tmp258 ___252_cosang 	%argrw{"wrr"}
+	add		$tmp260 $tmp256 $tmp259 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:297
+#     matrix M = matrix (x * x + (1.0 - x * x) * cosang,
+	matrix		___252_M $tmp226 $tmp230 $tmp234 $const9 $tmp238 $tmp243 $tmp247 $const9 $tmp251 $tmp255 $tmp260 $const9 $const9 $const9 $const9 $const8 	%line{297} %argrw{"wrrrrrrrrrrrrrrrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:310
+#     return transform (M, p-a) + a;
+	sub		$tmp262 worldPoint $const39 	%line{310} %argrw{"wrr"}
+	transformv	$tmp261 ___252_M $tmp262 	%argrw{"wrr"}
+	add		rotYP $tmp261 $const39 	%argrw{"wrr"}
+# waxDisplacement.osl:102
+#     inLine = lines(noiseLine, smoothStart, smoothEnd, rotYP[0]-0.35, rotYP[0] -0.36, worldPoint[1] - 0.23, worldPoint[1]-0.6, worldPoint[2]+1, worldPoint[2]);
+	compref		$tmp263 rotYP $const4 	%filename{"waxDisplacement.osl"} %line{102} %argrw{"wrr"}
+	sub		$tmp264 $tmp263 $const57 	%argrw{"wrr"}
+	compref		$tmp265 rotYP $const4 	%argrw{"wrr"}
+	sub		$tmp266 $tmp265 $const58 	%argrw{"wrr"}
+	compref		$tmp267 worldPoint $const6 	%argrw{"wrr"}
+	sub		$tmp268 $tmp267 $const59 	%argrw{"wrr"}
+	compref		$tmp269 worldPoint $const6 	%argrw{"wrr"}
+	sub		$tmp270 $tmp269 $const53 	%argrw{"wrr"}
+	compref		$tmp271 worldPoint $const5 	%argrw{"wrr"}
+	add		$tmp272 $tmp271 $const8 	%argrw{"wrr"}
+	compref		$tmp273 worldPoint $const5 	%argrw{"wrr"}
+	functioncall	$const23 362 	%argrw{"r"}
+# waxDisplacement.osl:15
+#     float inLineX = smoothstep(smoothStart, smoothEnd, xPosStart) - smoothstep(smoothStart, smoothEnd, xPosEnd);
+	smoothstep	$tmp274 smoothStart smoothEnd $tmp264 	%line{15} %argrw{"wrrr"}
+	smoothstep	$tmp275 smoothStart smoothEnd $tmp266 	%argrw{"wrrr"}
+	sub		___325_inLineX $tmp274 $tmp275 	%argrw{"wrr"}
+# waxDisplacement.osl:16
+#     float inLineY = smoothstep(smoothStart, smoothEnd, yPosStart) - smoothstep(smoothStart, smoothEnd, yPosEnd);
+	smoothstep	$tmp276 smoothStart smoothEnd $tmp268 	%line{16} %argrw{"wrrr"}
+	smoothstep	$tmp277 smoothStart smoothEnd $tmp270 	%argrw{"wrrr"}
+	sub		___325_inLineY $tmp276 $tmp277 	%argrw{"wrr"}
+# waxDisplacement.osl:17
+#     float inLineZ = smoothstep(smoothStart, smoothEnd, zPosStart) - smoothstep(smoothStart, smoothEnd, zPosEnd);
+	smoothstep	$tmp278 smoothStart smoothEnd $tmp272 	%line{17} %argrw{"wrrr"}
+	smoothstep	$tmp279 smoothStart smoothEnd $tmp273 	%argrw{"wrrr"}
+	sub		___325_inLineZ $tmp278 $tmp279 	%argrw{"wrr"}
+# waxDisplacement.osl:20
+#     return inLineX * inLineY * inLineZ;
+	mul		$tmp280 ___325_inLineX ___325_inLineY 	%line{20} %argrw{"wrr"}
+	mul		inLine $tmp280 ___325_inLineZ 	%argrw{"wrr"}
+# waxDisplacement.osl:104
+#     float lineX =  smoothstep(smoothStart, smoothEnd, worldPoint[0]-0.198) - smoothstep(smoothStart, smoothEnd, worldPoint[0]-0.27);
+	compref		$tmp282 worldPoint $const4 	%line{104} %argrw{"wrr"}
+	sub		$tmp283 $tmp282 $const60 	%argrw{"wrr"}
+	smoothstep	$tmp281 smoothStart smoothEnd $tmp283 	%argrw{"wrrr"}
+	compref		$tmp285 worldPoint $const4 	%argrw{"wrr"}
+	sub		$tmp286 $tmp285 $const22 	%argrw{"wrr"}
+	smoothstep	$tmp284 smoothStart smoothEnd $tmp286 	%argrw{"wrrr"}
+	sub		lineX $tmp281 $tmp284 	%argrw{"wrr"}
+# waxDisplacement.osl:105
+#     inLine = lineX * inLine;
+	mul		inLine lineX inLine 	%line{105} %argrw{"wrr"}
+# waxDisplacement.osl:106
+#     noiseDispAmount = 0.01 * noise("uperlin", worldPoint * 10);
+	mul		$tmp288 worldPoint $const26 	%line{106} %argrw{"wrr"}
+	noise		$tmp287 $const12 $tmp288 	%argrw{"wrr"}
+	mul		noiseDispAmount $const24 $tmp287 	%argrw{"wrr"}
+# waxDisplacement.osl:108
+#     dispLine = mix(0,noiseDispAmount, inLine);
+	mix		dispLine $const9 noiseDispAmount inLine 	%line{108} %argrw{"wrrr"}
+# waxDisplacement.osl:109
+#     resultF +=dispLine;
+	add		resultF resultF dispLine 	%line{109} %argrw{"wrr"}
+# waxDisplacement.osl:113
+#     float noiseCircle = noise("uperlin", worldPoint * 100);
+	mul		$tmp289 worldPoint $const62 	%line{113} %argrw{"wrr"}
+	noise		noiseCircle $const12 $tmp289 	%argrw{"wrr"}
+# waxDisplacement.osl:114
+#     dist=sqrt((worldPoint[0]+0.05)*(worldPoint[0]+0.05)+(worldPoint[2]-0.01)*(worldPoint[2]-0.01));
+	compref		$tmp290 worldPoint $const4 	%line{114} %argrw{"wrr"}
+	add		$tmp291 $tmp290 $const15 	%argrw{"wrr"}
+	compref		$tmp292 worldPoint $const4 	%argrw{"wrr"}
+	add		$tmp293 $tmp292 $const15 	%argrw{"wrr"}
+	mul		$tmp294 $tmp291 $tmp293 	%argrw{"wrr"}
+	compref		$tmp295 worldPoint $const5 	%argrw{"wrr"}
+	sub		$tmp296 $tmp295 $const24 	%argrw{"wrr"}
+	compref		$tmp297 worldPoint $const5 	%argrw{"wrr"}
+	sub		$tmp298 $tmp297 $const24 	%argrw{"wrr"}
+	mul		$tmp299 $tmp296 $tmp298 	%argrw{"wrr"}
+	add		$tmp300 $tmp294 $tmp299 	%argrw{"wrr"}
+	sqrt		dist $tmp300 	%argrw{"wr"}
+# waxDisplacement.osl:115
+#     float noiseTop = noise("uperlin", worldPoint * 4);
+	mul		$tmp301 worldPoint $const64 	%line{115} %argrw{"wrr"}
+	noise		noiseTop $const12 $tmp301 	%argrw{"wrr"}
+# waxDisplacement.osl:116
+#     inDisk=1 - smoothstep(0.2 * noiseCircle ,0.2 * noiseCircle,dist);
+	mul		$tmp303 $const19 noiseCircle 	%line{116} %argrw{"wrr"}
+	mul		$tmp304 $const19 noiseCircle 	%argrw{"wrr"}
+	smoothstep	$tmp302 $tmp303 $tmp304 dist 	%argrw{"wrrr"}
+	sub		inDisk $const8 $tmp302 	%argrw{"wrr"}
+# waxDisplacement.osl:118
+#     noiseTop =smoothstep(0.5,0.54, noiseTop);
+	smoothstep	noiseTop $const65 $const66 noiseTop 	%line{118} %argrw{"wrrr"}
+# waxDisplacement.osl:119
+#     noiseTop = noiseTop * inDisk;
+	mul		noiseTop noiseTop inDisk 	%line{119} %argrw{"wrr"}
+# waxDisplacement.osl:120
+#     noiseDispAmount = 0.0 * noise("uperlin", worldPoint * 10);
+	mul		$tmp306 worldPoint $const26 	%line{120} %argrw{"wrr"}
+	noise		$tmp305 $const12 $tmp306 	%argrw{"wrr"}
+	mul		noiseDispAmount $const9 $tmp305 	%argrw{"wrr"}
+# waxDisplacement.osl:123
+#     dispLine = mix(0,noiseDispAmount, inLine);
+	mix		dispLine $const9 noiseDispAmount inLine 	%line{123} %argrw{"wrrr"}
+# waxDisplacement.osl:124
+#     resultF +=dispLine;
+	add		resultF resultF dispLine 	%line{124} %argrw{"wrr"}
+# waxDisplacement.osl:128
+#     dist=sqrt((worldPoint[0]+0.36)*(worldPoint[0]+0.37)+(worldPoint[2])*(worldPoint[2]));
+	compref		$tmp307 worldPoint $const4 	%line{128} %argrw{"wrr"}
+	add		$tmp308 $tmp307 $const58 	%argrw{"wrr"}
+	compref		$tmp309 worldPoint $const4 	%argrw{"wrr"}
+	add		$tmp310 $tmp309 $const67 	%argrw{"wrr"}
+	mul		$tmp311 $tmp308 $tmp310 	%argrw{"wrr"}
+	compref		$tmp312 worldPoint $const5 	%argrw{"wrr"}
+	compref		$tmp313 worldPoint $const5 	%argrw{"wrr"}
+	mul		$tmp314 $tmp312 $tmp313 	%argrw{"wrr"}
+	add		$tmp315 $tmp311 $tmp314 	%argrw{"wrr"}
+	sqrt		dist $tmp315 	%argrw{"wr"}
+# waxDisplacement.osl:129
+#     worldPoint = worldPoint - point(0.36,0.5,0);
+	sub		worldPoint worldPoint $const68 	%line{129} %argrw{"wrr"}
+# waxDisplacement.osl:130
+#     inDisk=1-smoothstep(0.05 ,0.05 ,dist * 0.6);
+	mul		$tmp318 dist $const53 	%line{130} %argrw{"wrr"}
+	smoothstep	$tmp317 $const15 $const15 $tmp318 	%argrw{"wrrr"}
+	sub		inDisk $const8 $tmp317 	%argrw{"wrr"}
+# waxDisplacement.osl:131
+#     point fingerprintPoint=worldPoint + point(0.36, 0, 0) +(vector)noise("perlin",worldPoint*6);
+	add		$tmp320 worldPoint $const69 	%line{131} %argrw{"wrr"}
+	mul		$tmp322 worldPoint $const71 	%argrw{"wrr"}
+	noise		$tmp321 $const31 $tmp322 	%argrw{"wrr"}
+	add		fingerprintPoint $tmp320 $tmp321 	%argrw{"wrr"}
+# waxDisplacement.osl:132
+#     float l=sqrt(fingerprintPoint[0]*fingerprintPoint[0]+fingerprintPoint[1]*fingerprintPoint[1]);
+	compref		$tmp323 fingerprintPoint $const4 	%line{132} %argrw{"wrr"}
+	compref		$tmp324 fingerprintPoint $const4 	%argrw{"wrr"}
+	mul		$tmp325 $tmp323 $tmp324 	%argrw{"wrr"}
+	compref		$tmp326 fingerprintPoint $const6 	%argrw{"wrr"}
+	compref		$tmp327 fingerprintPoint $const6 	%argrw{"wrr"}
+	mul		$tmp328 $tmp326 $tmp327 	%argrw{"wrr"}
+	add		$tmp329 $tmp325 $tmp328 	%argrw{"wrr"}
+	sqrt		l $tmp329 	%argrw{"wr"}
+# waxDisplacement.osl:133
+#     l = mod(l*8,1);
+	mul		$tmp330 l $const73 	%line{133} %argrw{"wrr"}
+	functioncall	$const74 434 	%argrw{"r"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:154
+# float  mod (float  a, float  b) { return a - b*floor(a/b); }
+	div		$tmp332 $tmp330 $const8 	%filename{"/opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h"} %line{154} %argrw{"wrr"}
+	floor		$tmp331 $tmp332 	%argrw{"wr"}
+	mul		$tmp333 $const8 $tmp331 	%argrw{"wrr"}
+	sub		l $tmp330 $tmp333 	%argrw{"wrr"}
+# waxDisplacement.osl:134
+#     l = inDisk * l;
+	mul		l inDisk l 	%filename{"waxDisplacement.osl"} %line{134} %argrw{"wrr"}
+# waxDisplacement.osl:135
+#     float dispFinger=mix(resultF,-0.02,inDisk);
+	mix		dispFinger resultF $const75 inDisk 	%line{135} %argrw{"wrrr"}
+# waxDisplacement.osl:136
+#     resultF +=dispFinger;
+	add		resultF resultF dispFinger 	%line{136} %argrw{"wrr"}
+# waxDisplacement.osl:140
+#     float mag=0;
+	assign		mag $const4 	%line{140} %argrw{"wr"}
+# waxDisplacement.osl:141
+#     float freq=0.3;
+	assign		freq $const21 	%line{141} %argrw{"wr"}
+# waxDisplacement.osl:142
+#     point scratchesPoint = worldPoint*5;
+	mul		scratchesPoint worldPoint $const77 	%line{142} %argrw{"wrr"}
+# waxDisplacement.osl:143
+#     scratchesPoint+= point(0,0,5);
+	add		scratchesPoint scratchesPoint $const78 	%line{143} %argrw{"wrr"}
+# waxDisplacement.osl:145
+#     for(int i=0;i<8;i+=1)
+	for		$tmp336 443 445 451 452 	%line{145} %argrw{"r"}
+	assign		___326_i $const4 	%argrw{"wr"}
+	lt		$tmp335 ___326_i $const72 	%argrw{"wrr"}
+	neq		$tmp336 $tmp335 $const4 	%argrw{"wrr"}
+# waxDisplacement.osl:147
+# 		mag+=abs((float)noise("perlin",scratchesPoint*freq))/freq;
+	mul		$tmp339 scratchesPoint freq 	%line{147} %argrw{"wrr"}
+	noise		$tmp338 $const31 $tmp339 	%argrw{"wrr"}
+	abs		$tmp337 $tmp338 	%argrw{"wr"}
+	div		$tmp340 $tmp337 freq 	%argrw{"wrr"}
+	add		mag mag $tmp340 	%argrw{"wrr"}
+# waxDisplacement.osl:148
+#         freq*=2.1;
+	mul		freq freq $const79 	%line{148} %argrw{"wrr"}
+# waxDisplacement.osl:145
+#     for(int i=0;i<8;i+=1)
+	add		___326_i ___326_i $const6 	%line{145} %argrw{"wrr"}
+# waxDisplacement.osl:151
+#     mag=1 - smoothstep(0,0.3,mag);
+	smoothstep	$tmp341 $const9 $const21 mag 	%line{151} %argrw{"wrrr"}
+	sub		mag $const8 $tmp341 	%argrw{"wrr"}
+# waxDisplacement.osl:154
+#     resultF += mix(resultF, -0.005, mag);
+	mix		$tmp342 resultF $const80 mag 	%line{154} %argrw{"wrrr"}
+	add		resultF resultF $tmp342 	%argrw{"wrr"}
+# waxDisplacement.osl:158
+#     mag=0;
+	assign		mag $const4 	%line{158} %argrw{"wr"}
+# waxDisplacement.osl:159
+#     freq=0.6;
+	assign		freq $const53 	%line{159} %argrw{"wr"}
+# waxDisplacement.osl:160
+#     scratchesPoint=worldPoint*10;
+	mul		scratchesPoint worldPoint $const26 	%line{160} %argrw{"wrr"}
+# waxDisplacement.osl:162
+#     for(int i=0;i<10;i+=1)
+	for		$tmp344 461 463 469 470 	%line{162} %argrw{"r"}
+	assign		___328_i $const4 	%argrw{"wr"}
+	lt		$tmp343 ___328_i $const25 	%argrw{"wrr"}
+	neq		$tmp344 $tmp343 $const4 	%argrw{"wrr"}
+# waxDisplacement.osl:164
+# 		mag+=abs((float)noise("perlin",scratchesPoint*freq))/freq;
+	mul		$tmp347 scratchesPoint freq 	%line{164} %argrw{"wrr"}
+	noise		$tmp346 $const31 $tmp347 	%argrw{"wrr"}
+	abs		$tmp345 $tmp346 	%argrw{"wr"}
+	div		$tmp348 $tmp345 freq 	%argrw{"wrr"}
+	add		mag mag $tmp348 	%argrw{"wrr"}
+# waxDisplacement.osl:165
+#         freq*=2.1;
+	mul		freq freq $const79 	%line{165} %argrw{"wrr"}
+# waxDisplacement.osl:162
+#     for(int i=0;i<10;i+=1)
+	add		___328_i ___328_i $const6 	%line{162} %argrw{"wrr"}
+# waxDisplacement.osl:168
+#     mag= 1 - smoothstep(0.1,0.3,mag);
+	smoothstep	$tmp349 $const18 $const21 mag 	%line{168} %argrw{"wrrr"}
+	sub		mag $const8 $tmp349 	%argrw{"wrr"}
+# waxDisplacement.osl:170
+#     resultF +=mix(resultF, -0.005, mag);
+	mix		$tmp350 resultF $const80 mag 	%line{170} %argrw{"wrrr"}
+	add		resultF resultF $tmp350 	%argrw{"wrr"}
+# waxDisplacement.osl:172
+#     mag=0;
+	assign		mag $const4 	%line{172} %argrw{"wr"}
+# waxDisplacement.osl:173
+#     freq=0.5;
+	assign		freq $const65 	%line{173} %argrw{"wr"}
+# waxDisplacement.osl:174
+#     scratchesPoint=worldPoint*10;
+	mul		scratchesPoint worldPoint $const26 	%line{174} %argrw{"wrr"}
+# waxDisplacement.osl:176
+#     scratchesPoint = rotate(scratchesPoint, radians(55), point(0,0,0), point(0,1,0));
+	functioncall	$const36 480 	%line{176} %argrw{"r"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:88
+# float  radians (float x)  { return x*(M_PI/180.0); }
+	div		$tmp352 $const37 $const38 	%filename{"/opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h"} %line{88} %argrw{"wrr"}
+	mul		$tmp351 $const82 $tmp352 	%argrw{"wrr"}
+# waxDisplacement.osl:176
+#     scratchesPoint = rotate(scratchesPoint, radians(55), point(0,0,0), point(0,1,0));
+	functioncall	$const41 531 	%filename{"waxDisplacement.osl"} %line{176} %argrw{"r"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:292
+#     vector axis = normalize (b - a);
+	sub		$tmp355 $const40 $const39 	%filename{"/opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h"} %line{292} %argrw{"wrr"}
+	normalize	___252_axis $tmp355 	%argrw{"wr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:294
+#     sincos (angle, sinang, cosang);
+	sincos		$tmp351 ___252_sinang ___252_cosang 	%line{294} %argrw{"rww"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:295
+#     float cosang1 = 1.0 - cosang;
+	sub		___252_cosang1 $const8 ___252_cosang 	%line{295} %argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:296
+#     float x = axis[0], y = axis[1], z = axis[2];
+	compref		___252_x ___252_axis $const4 	%line{296} %argrw{"wrr"}
+	compref		___252_y ___252_axis $const6 	%argrw{"wrr"}
+	compref		___252_z ___252_axis $const5 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:297
+#     matrix M = matrix (x * x + (1.0 - x * x) * cosang,
+	mul		$tmp356 ___252_x ___252_x 	%line{297} %argrw{"wrr"}
+	mul		$tmp357 ___252_x ___252_x 	%argrw{"wrr"}
+	sub		$tmp358 $const8 $tmp357 	%argrw{"wrr"}
+	mul		$tmp359 $tmp358 ___252_cosang 	%argrw{"wrr"}
+	add		$tmp360 $tmp356 $tmp359 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:298
+#                        x * y * cosang1 + z * sinang,
+	mul		$tmp361 ___252_x ___252_y 	%line{298} %argrw{"wrr"}
+	mul		$tmp362 $tmp361 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp363 ___252_z ___252_sinang 	%argrw{"wrr"}
+	add		$tmp364 $tmp362 $tmp363 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:299
+#                        x * z * cosang1 - y * sinang,
+	mul		$tmp365 ___252_x ___252_z 	%line{299} %argrw{"wrr"}
+	mul		$tmp366 $tmp365 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp367 ___252_y ___252_sinang 	%argrw{"wrr"}
+	sub		$tmp368 $tmp366 $tmp367 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:301
+#                        x * y * cosang1 - z * sinang,
+	mul		$tmp369 ___252_x ___252_y 	%line{301} %argrw{"wrr"}
+	mul		$tmp370 $tmp369 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp371 ___252_z ___252_sinang 	%argrw{"wrr"}
+	sub		$tmp372 $tmp370 $tmp371 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:302
+#                        y * y + (1.0 - y * y) * cosang,
+	mul		$tmp373 ___252_y ___252_y 	%line{302} %argrw{"wrr"}
+	mul		$tmp374 ___252_y ___252_y 	%argrw{"wrr"}
+	sub		$tmp375 $const8 $tmp374 	%argrw{"wrr"}
+	mul		$tmp376 $tmp375 ___252_cosang 	%argrw{"wrr"}
+	add		$tmp377 $tmp373 $tmp376 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:303
+#                        y * z * cosang1 + x * sinang,
+	mul		$tmp378 ___252_y ___252_z 	%line{303} %argrw{"wrr"}
+	mul		$tmp379 $tmp378 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp380 ___252_x ___252_sinang 	%argrw{"wrr"}
+	add		$tmp381 $tmp379 $tmp380 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:305
+#                        x * z * cosang1 + y * sinang,
+	mul		$tmp382 ___252_x ___252_z 	%line{305} %argrw{"wrr"}
+	mul		$tmp383 $tmp382 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp384 ___252_y ___252_sinang 	%argrw{"wrr"}
+	add		$tmp385 $tmp383 $tmp384 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:306
+#                        y * z * cosang1 - x * sinang,
+	mul		$tmp386 ___252_y ___252_z 	%line{306} %argrw{"wrr"}
+	mul		$tmp387 $tmp386 ___252_cosang1 	%argrw{"wrr"}
+	mul		$tmp388 ___252_x ___252_sinang 	%argrw{"wrr"}
+	sub		$tmp389 $tmp387 $tmp388 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:307
+#                        z * z + (1.0 - z * z) * cosang,
+	mul		$tmp390 ___252_z ___252_z 	%line{307} %argrw{"wrr"}
+	mul		$tmp391 ___252_z ___252_z 	%argrw{"wrr"}
+	sub		$tmp392 $const8 $tmp391 	%argrw{"wrr"}
+	mul		$tmp393 $tmp392 ___252_cosang 	%argrw{"wrr"}
+	add		$tmp394 $tmp390 $tmp393 	%argrw{"wrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:297
+#     matrix M = matrix (x * x + (1.0 - x * x) * cosang,
+	matrix		___252_M $tmp360 $tmp364 $tmp368 $const9 $tmp372 $tmp377 $tmp381 $const9 $tmp385 $tmp389 $tmp394 $const9 $const9 $const9 $const9 $const8 	%line{297} %argrw{"wrrrrrrrrrrrrrrrr"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:310
+#     return transform (M, p-a) + a;
+	sub		$tmp396 scratchesPoint $const39 	%line{310} %argrw{"wrr"}
+	transformv	$tmp395 ___252_M $tmp396 	%argrw{"wrr"}
+	add		scratchesPoint $tmp395 $const39 	%argrw{"wrr"}
+# waxDisplacement.osl:178
+#     for(int i=0;i<8;i+=1)
+	for		$tmp398 533 535 541 542 	%filename{"waxDisplacement.osl"} %line{178} %argrw{"r"}
+	assign		___330_i $const4 	%argrw{"wr"}
+	lt		$tmp397 ___330_i $const72 	%argrw{"wrr"}
+	neq		$tmp398 $tmp397 $const4 	%argrw{"wrr"}
+# waxDisplacement.osl:180
+# 		mag+=abs((float)noise("perlin",scratchesPoint*freq))/freq;
+	mul		$tmp401 scratchesPoint freq 	%line{180} %argrw{"wrr"}
+	noise		$tmp400 $const31 $tmp401 	%argrw{"wrr"}
+	abs		$tmp399 $tmp400 	%argrw{"wr"}
+	div		$tmp402 $tmp399 freq 	%argrw{"wrr"}
+	add		mag mag $tmp402 	%argrw{"wrr"}
+# waxDisplacement.osl:181
+#         freq*=2.1;
+	mul		freq freq $const79 	%line{181} %argrw{"wrr"}
+# waxDisplacement.osl:178
+#     for(int i=0;i<8;i+=1)
+	add		___330_i ___330_i $const6 	%line{178} %argrw{"wrr"}
+# waxDisplacement.osl:184
+#     mag= 1 - smoothstep(0.1,0.3,mag);
+	smoothstep	$tmp403 $const18 $const21 mag 	%line{184} %argrw{"wrrr"}
+	sub		mag $const8 $tmp403 	%argrw{"wrr"}
+# waxDisplacement.osl:186
+#     resultF +=mix(resultF, -0.05, mag);
+	mix		$tmp404 resultF $const83 mag 	%line{186} %argrw{"wrrr"}
+	add		resultF resultF $tmp404 	%argrw{"wrr"}
 	end

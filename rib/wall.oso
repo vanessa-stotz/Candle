@@ -1,0 +1,31 @@
+OpenShadingLanguage 1.00
+# Compiled by oslc 1.11.0@OPROJECT_VERSION_RELEASE_TYPE@
+# options: 
+shader wall
+oparam	color	Cout	1 1 1		%read{3,3} %write{2,3}
+oparam	float	disp	0		%read{2147483647,-1} %write{5,5}
+global	point	P	%read{4,4} %write{2147483647,-1}
+global	float	u	%read{0,0} %write{2147483647,-1} %derivs
+global	float	v	%read{1,1} %write{2147483647,-1} %derivs
+const	string	$const1	"../wall.tx"		%read{2,2} %write{2147483647,-1}
+temp	float	$tmp1	%read{2,2} %write{0,0} %derivs
+const	float	$const3	6		%read{0,1} %write{2147483647,-1}
+temp	float	$tmp2	%read{2,2} %write{1,1} %derivs
+const	float	$const4	0.5		%read{3,3} %write{2147483647,-1}
+const	string	$const5	"perlin"		%read{5,5} %write{2147483647,-1}
+temp	point	$tmp3	%read{5,5} %write{4,4}
+const	float	$const7	20		%read{4,4} %write{2147483647,-1}
+code ___main___
+# wall.osl:7
+#     Cout=(color)texture("../wall.tx",u*6,v*6);
+	mul		$tmp1 u $const3 	%filename{"wall.osl"} %line{7} %argrw{"wrr"}
+	mul		$tmp2 v $const3 	%argrw{"wrr"}
+	texture		Cout $const1 $tmp1 $tmp2 	%argrw{"wrrr"} %argderivs{2,3}
+# wall.osl:8
+#     Cout *= 0.5;
+	mul		Cout Cout $const4 	%line{8} %argrw{"wrr"}
+# wall.osl:9
+#     disp = noise("perlin", P * 20);
+	mul		$tmp3 P $const7 	%line{9} %argrw{"wrr"}
+	noise		disp $const5 $tmp3 	%argrw{"wrr"}
+	end

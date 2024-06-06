@@ -1,22 +1,196 @@
+float lines(
+
+    float noiseLine,
+    float smoothStart,
+    float smoothEnd,
+    float xPosStart,
+    float xPosEnd,
+    float yPosStart,
+    float yPosEnd,
+    float zPosStart,
+    float zPosEnd,
+
+)
+{
+    float inLineX = smoothstep(smoothStart, smoothEnd, xPosStart) - smoothstep(smoothStart, smoothEnd, xPosEnd);
+    float inLineY = smoothstep(smoothStart, smoothEnd, yPosStart) - smoothstep(smoothStart, smoothEnd, yPosEnd);
+    float inLineZ = smoothstep(smoothStart, smoothEnd, zPosStart) - smoothstep(smoothStart, smoothEnd, zPosEnd);
+    
+    // add line together
+    return inLineX * inLineY * inLineZ;
+}
+
+
 shader waxDisplacement (
-output	float resultF=0
+output	float resultF=0,
 )
 {
     point worldPoint = transform("world", P);
-    float fuzz=0.1;
-    float repeatCount=5;
-    float s=mod(repeatCount*u,1);
-    float t=mod(repeatCount*v,1);
-    point centre=point (0.5,0.5,0);
-    point here=point (s,t,0);
-    float dist=distance(centre,here);
-    float radius=(float) noise("cell",repeatCount*u,repeatCount*v)*0.4;
-    float inDisk=1-smoothstep(radius-fuzz,radius+fuzz,dist);
-    resultF=inDisk*0.01;
+
+    //--------Start hole at the top----------------
+    //circle at this point
+    float dist=sqrt((worldPoint[0])*(worldPoint[0])+(worldPoint[2])*(worldPoint[2]));
+    float inDisk=1-smoothstep(0.02,0.02,dist);
+    float dispHoleTop = mix(0,-1,inDisk);
+    resultF +=dispHoleTop;
+    //--------End hole at the top----------------
 
 
-    resultF=noise("perlin",worldPoint*5)*0.1;
-    resultF+=noise("perlin",worldPoint*10)*0.1/2;
-    resultF+=noise("perlin",worldPoint*21)*0.1/4;
+    //-------Start long line little arch --------------
+    float noiseLine=noise("uperlin",worldPoint *9);
+    // break line with a little noise
+    float smoothStart = (0.05 * noiseLine/2) *1.2;
+    float smoothEnd = (0.1 * noiseLine/2) *1.2;
+    float inLine = lines(noiseLine, smoothStart, smoothEnd, worldPoint[0], worldPoint[0] - 0.2, worldPoint[1] + 0.2, worldPoint[1]-1.1, worldPoint[2]+ 0.30, worldPoint[2]+0.27);
+    // add noise to displacement to make it less straight
+    float noiseDispAmount = 0.01 * noise("uperlin", worldPoint * 10);
+    //ad to displacement
+    float dispLine = mix(0,noiseDispAmount, inLine);
+    resultF +=dispLine;
+    //-------End long line little arch --------------
+
+    //-------Start short line little arch --------------
+    noiseLine=noise("uperlin",worldPoint *20);
+    inLine = lines(noiseLine, smoothStart, smoothEnd, worldPoint[0]+0.02, worldPoint[0] -0.02, worldPoint[1] - 0.95, worldPoint[1]-1.2, worldPoint[2]+1, worldPoint[2]);
+    // add noise to displacement to make it less straight
+    noiseDispAmount = 0.01 * noise("uperlin", worldPoint * 10);
+    //ad to displacement
+    dispLine = mix(0,noiseDispAmount, inLine);
+    resultF +=dispLine;
+    //-------End short line little arch --------------
+
+
+    //-------Start side line long arch --------------
+    point pointLineTop = point(worldPoint[0], worldPoint[1], worldPoint[2]) + point(-0.09,0,0);
+    noiseLine=noise("perlin",pointLineTop *9);
+    // break line with a little noise
+    smoothStart = (0.05 * noiseLine * 3)*1.2;
+    smoothEnd = 0.1 * noiseLine;
+    point rotXP = rotate(pointLineTop, radians(45), point(0,0,0), point(0,1,0));
+    inLine = lines(noiseLine, smoothStart, smoothEnd, rotXP[0] + 0.08, rotXP[0], pointLineTop[1]-1.25, pointLineTop[1]-1.7, pointLineTop[2]+0.3, pointLineTop[2]);
+    // add noise to displacement to make it less straight
+    noiseDispAmount = 0.009 * noise("uperlin", pointLineTop * 10);
+    //ad to displacement
+    dispLine = mix(0,noiseDispAmount, inLine);
+    resultF +=dispLine;
+    //-------End side line long arch --------------
+
+    //-------Start short line big arch --------------
+    noiseLine=noise("uperlin",worldPoint *15);
+    rotXP = rotate(worldPoint, radians(0), point(0,0,0), point(0,1,0));
+    inLine = lines(noiseLine, smoothStart, smoothEnd, worldPoint[0]-0.4, worldPoint[0] -0.42, worldPoint[1]-1.5, worldPoint[1]-1.7, worldPoint[2]+0.07, worldPoint[2]);
+    // add noise to displacement to make it less straight
+    noiseDispAmount = 0.01 * noise("uperlin", worldPoint * 10);
+    //ad to displacement
+    dispLine = mix(0,noiseDispAmount, inLine);
+    resultF +=dispLine;
+    //-------End short line big arch --------------
+
+    //-------Start dot big arch --------------
+    dist=sqrt((worldPoint[0]-0.27)*(worldPoint[0]-0.27)+(worldPoint[1]-0.24)*(worldPoint[1]-0.24));
+    inDisk=1-smoothstep(0.02 * noiseLine,0.02 * noiseLine,dist * 0.6);
+    noiseDispAmount = 0.01 * noise("uperlin", worldPoint * 10);
+    resultF =mix(resultF,noiseDispAmount,inDisk);
+    //-------End dot big arch --------------
+
+    //------Start line to dot big arch----------
+    noiseLine=noise("uperlin",worldPoint *9);
+    // break line with a little noise
+    smoothStart = (0.05 * noiseLine/2) *1.2;
+    smoothEnd = (0.1 * noiseLine/2) *1.2;
+    point rotYP = rotate(worldPoint, radians(-45), point(0,0,0), point(1,1,0));
+    inLine = lines(noiseLine, smoothStart, smoothEnd, rotYP[0]-0.35, rotYP[0] -0.36, worldPoint[1] - 0.23, worldPoint[1]-0.6, worldPoint[2]+1, worldPoint[2]);
+    // add noise to displacement to make it less straight
+    float lineX =  smoothstep(smoothStart, smoothEnd, worldPoint[0]-0.198) - smoothstep(smoothStart, smoothEnd, worldPoint[0]-0.27);
+    inLine = lineX * inLine;
+    noiseDispAmount = 0.01 * noise("uperlin", worldPoint * 10);
+    //ad to displacement
+    dispLine = mix(0,noiseDispAmount, inLine);
+    resultF +=dispLine;
+    //------End line to dot big arch----------
+
+    //------Start dots on top----------
+    float noiseCircle = noise("uperlin", worldPoint * 100);
+    dist=sqrt((worldPoint[0]+0.05)*(worldPoint[0]+0.05)+(worldPoint[2]-0.01)*(worldPoint[2]-0.01));
+    float noiseTop = noise("uperlin", worldPoint * 4);
+    inDisk=1 - smoothstep(0.2 * noiseCircle ,0.2 * noiseCircle,dist);
+
+    noiseTop =smoothstep(0.5,0.54, noiseTop);
+    noiseTop = noiseTop * inDisk;
+    noiseDispAmount = 0.0 * noise("uperlin", worldPoint * 10);
+    //noiseTop = noiseTop * inLineX;
+
+    dispLine = mix(0,noiseDispAmount, inLine);
+    resultF +=dispLine;
+    //------End dots on top----------
+
+    // //------Start fingerprints----------
+    // dist=sqrt((worldPoint[0]+0.36)*(worldPoint[0]+0.37)+(worldPoint[2])*(worldPoint[2]));
+    // worldPoint = worldPoint - point(0.36,0.5,0);
+    // inDisk=1-smoothstep(0.05 ,0.05 ,dist * 0.6);
+    // point fingerprintPoint=worldPoint + point(0.36, 0, 0) +(vector)noise("perlin",worldPoint*6);
+    // float l=sqrt(fingerprintPoint[0]*fingerprintPoint[0]+fingerprintPoint[1]*fingerprintPoint[1]);
+    // l = mod(l*8,1);
+    // l = inDisk * l;
+    // float dispFinger=mix(resultF,-0.02,inDisk);
+    // resultF +=dispFinger;
+    // //------End fingerprints----------
+
+    //------Start big scratches----------
+    float mag=0;
+    float freq=0.3;
+    point scratchesPoint = worldPoint*5;
+    scratchesPoint+= point(0,0,5);
+
+    for(int i=0;i<8;i+=1)
+        {
+		mag+=abs((float)noise("perlin",scratchesPoint*freq))/freq;
+        freq*=2.1;
+	}
+
+    mag=1 - smoothstep(0,0.3,mag);
+
+    //noiseDispAmount *= -0.01;
+    resultF += mix(resultF, -0.005, mag);
+    //------End big scratches----------
+
+    //------Start little scratches----------
+    mag=0;
+    freq=0.6;
+    scratchesPoint=worldPoint*10;
+
+    for(int i=0;i<10;i+=1)
+        {
+		mag+=abs((float)noise("perlin",scratchesPoint*freq))/freq;
+        freq*=2.1;
+	}
+
+    mag= 1 - smoothstep(0.1,0.3,mag);
+
+    resultF +=mix(resultF, -0.005, mag);
+
+    mag=0;
+    freq=0.5;
+    scratchesPoint=worldPoint*10;
+
+    scratchesPoint = rotate(scratchesPoint, radians(55), point(0,0,0), point(0,1,0));
+
+    for(int i=0;i<8;i+=1)
+        {
+		mag+=abs((float)noise("perlin",scratchesPoint*freq))/freq;
+        freq*=2.1;
+	}
+
+    mag= 1 - smoothstep(0.1,0.3,mag);
+
+    resultF +=mix(resultF, -0.05, mag);
+    //------End little scratches----------
+
+
+
 }
+
+
+
+
 

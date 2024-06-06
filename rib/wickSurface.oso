@@ -2,10 +2,64 @@ OpenShadingLanguage 1.00
 # Compiled by oslc 1.11.0@OPROJECT_VERSION_RELEASE_TYPE@
 # options: 
 shader wickSurface
-param	color	Cin	0 0 0		%read{0,0} %write{2147483647,-1}
-oparam	color	Cout	0 0 0		%read{2147483647,-1} %write{0,0}
+oparam	color	Cout	0 0 0		%read{11,11} %write{10,11}
+oparam	float	specular	0		%read{2147483647,-1} %write{12,12}
+oparam	float	roughness	0		%read{2147483647,-1} %write{13,13}
+global	point	P	%read{1,7} %write{2147483647,-1}
+global	float	v	%read{3,3} %write{2147483647,-1}
+local	color	Cin	%read{9,10} %write{0,0}
+local	float	noiseEdge	%read{2147483647,-1} %write{2,2}
+local	float	whichStripe	%read{10,13} %write{6,6}
+local	float	noiseDots	%read{11,11} %write{8,8}
+const	color	$const1	0.75999999 0.689999998 0.529999971		%read{0,0} %write{2147483647,-1}
+const	float	$const2	0.899999976		%read{0,0} %write{2147483647,-1}
+const	string	$const3	"uperlin"		%read{2,2} %write{2147483647,-1}
+temp	point	$tmp2	%read{2,2} %write{1,1}
+const	float	$const5	20		%read{1,1} %write{2147483647,-1}
+temp	float	$tmp3	%read{6,6} %write{5,5}
+const	float	$const7	0.119999997		%read{5,5} %write{2147483647,-1}
+const	float	$const8	0.140000001		%read{5,5} %write{2147483647,-1}
+temp	float	$tmp4	%read{4,4} %write{3,3}
+const	float	$const10	2		%read{3,3} %write{2147483647,-1}
+const	float	$const11	0.00999999978		%read{4,4} %write{2147483647,-1}
+temp	float	$tmp5	%read{5,5} %write{4,4}
+const	float	$const12	1		%read{6,12} %write{2147483647,-1}
+const	string	$const13	"perlin"		%read{8,8} %write{2147483647,-1}
+temp	point	$tmp6	%read{8,8} %write{7,7}
+const	float	$const15	90		%read{7,7} %write{2147483647,-1}
+const	float	$const16	0.600000024		%read{9,13} %write{2147483647,-1}
+temp	color	$tmp7	%read{10,10} %write{9,9}
+const	color	$const17	0.400000006 0.310000002 0.200000003		%read{11,11} %write{2147483647,-1}
+const	float	$const19	0		%read{12,13} %write{2147483647,-1}
 code ___main___
-# wickSurface.osl:6
-#     Cout=Cin;
-	assign		Cout Cin 	%filename{"wickSurface.osl"} %line{6} %argrw{"wr"}
+# wickSurface.osl:7
+#     color Cin = color(0.76,0.69,0.53)*0.9;
+	mul		Cin $const1 $const2 	%filename{"wickSurface.osl"} %line{7} %argrw{"wrr"}
+# wickSurface.osl:8
+#     float noiseEdge = noise("uperlin", P * 20);
+	mul		$tmp2 P $const5 	%line{8} %argrw{"wrr"}
+	noise		noiseEdge $const3 $tmp2 	%argrw{"wrr"}
+# wickSurface.osl:9
+#     float whichStripe= 1 - smoothstep(0.12,0.14, (v/2)+0.01);
+	div		$tmp4 v $const10 	%line{9} %argrw{"wrr"}
+	add		$tmp5 $tmp4 $const11 	%argrw{"wrr"}
+	smoothstep	$tmp3 $const7 $const8 $tmp5 	%argrw{"wrrr"}
+	sub		whichStripe $const12 $tmp3 	%argrw{"wrr"}
+# wickSurface.osl:11
+#     float noiseDots = noise("perlin", P * 90);
+	mul		$tmp6 P $const15 	%line{11} %argrw{"wrr"}
+	noise		noiseDots $const13 $tmp6 	%argrw{"wrr"}
+# wickSurface.osl:13
+#     Cout=mix(Cin, Cin*0.6, whichStripe);
+	mul		$tmp7 Cin $const16 	%line{13} %argrw{"wrr"}
+	mix		Cout Cin $tmp7 whichStripe 	%argrw{"wrrr"}
+# wickSurface.osl:14
+#     Cout = mix(Cout,color(0.4,0.31,0.2), noiseDots);
+	mix		Cout Cout $const17 noiseDots 	%line{14} %argrw{"wrrr"}
+# wickSurface.osl:16
+#     specular = mix(0,1, whichStripe);
+	mix		specular $const19 $const12 whichStripe 	%line{16} %argrw{"wrrr"}
+# wickSurface.osl:18
+#     roughness = mix(0, 0.6, whichStripe);
+	mix		roughness $const19 $const16 whichStripe 	%line{18} %argrw{"wrrr"}
 	end

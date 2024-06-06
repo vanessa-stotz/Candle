@@ -1,0 +1,9 @@
+shader wall (
+output	color Cout=1,
+output float disp = 0
+)
+{
+    Cout=(color)texture("../wall.tx",u*6,v*6);
+    Cout *= 0.5;
+    disp = noise("perlin", P * 20);
+}
